@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "11371026917",
+    "firebase_url": "https://bdapumanque.firebaseio.com",
+    "project_id": "bdapumanque",
+    "storage_bucket": "bdapumanque.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:11371026917:android:42e3ebf365b8c465",
+        "android_client_info": {
+          "package_name": "com.rinno.apumanquewayfinder"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "11371026917-r8idg72ur7q6argcs1mnctqgj6nr3ifi.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBn8r2NmJLOO3aKlOBF93zAYcwGG4J2_9w"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

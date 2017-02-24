@@ -1,0 +1,62 @@
+ {
+  "project_info": {
+    "project_number": "1065195838193",
+    "firebase_url": "https://apumanque-7cdb5.firebaseio.com",
+    "project_id": "apumanque-7cdb5",
+    "storage_bucket": "apumanque-7cdb5.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1065195838193:android:42e3ebf365b8c465",
+        "android_client_info": {
+          "package_name": "com.rinno.apumanquewayfinder"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1065195838193-5vg2rrg6bio18p6c40gqqabne5dgri2o.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.rinno.apumanquewayfinder",
+            "certificate_hash": "32f584515dea271022066338576d192235e2294a"
+          }
+        },
+        {
+          "client_id": "1065195838193-gklo93q2b0einr2o18hgvn166b1mr2iu.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAGWbuUxF3ao5OtcDGPYo4OiuCaU3hHp0E"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1065195838193-gklo93q2b0einr2o18hgvn166b1mr2iu.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1065195838193-2aohmdjptets7fvcb5m5m9rk2953gaml.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.rinno.Apumanque"
+              }
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
