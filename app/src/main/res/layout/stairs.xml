@@ -8,24 +8,28 @@
             android:id="@+id/btEscalera1"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:background="@drawable/escalerablanca"/>
+            android:background="@drawable/escalerablanca"
+            android:visibility="gone"/>
 
         <ImageView
             android:id="@+id/btEscalera2"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:background="@drawable/escalerablanca"/>
+            android:background="@drawable/escalerablanca"
+            android:visibility="gone"/>
 
         <ImageView
             android:id="@+id/btEscalera3"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:background="@drawable/escalerablanca"/>
+            android:background="@drawable/escalerablanca"
+            android:visibility="gone"/>
 
         <ImageView
             android:id="@+id/btEscalera4"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:background="@drawable/escalerablanca"/>
+            android:background="@drawable/escalerablanca"
+            android:visibility="gone"/>
 
 </RelativeLayout>

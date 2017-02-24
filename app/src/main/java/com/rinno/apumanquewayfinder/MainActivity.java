@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -110,19 +109,6 @@ public class MainActivity extends AppCompatActivity {
         ancho = (float) (965 + 80) /1254;
         alto = (float) (783 + 120) /1080;
 
-        btEscalera1.setEnabled(false);
-        btEscalera2.setEnabled(false);
-        btEscalera3.setEnabled(false);
-        btEscalera4.setEnabled(false);
-        btEscalera1.setX((float) (285 * ancho));
-        btEscalera1.setY((float) 183 * alto);
-        btEscalera2.setX((float) (975 * ancho));
-        btEscalera2.setY((float) 183 * alto);
-        btEscalera3.setX((float) (285 * ancho));
-        btEscalera3.setY((float) 795 * alto);
-        btEscalera4.setX((float) (975 * ancho));
-        btEscalera4.setY((float) 795 * alto);
-
         //get drawing view
         drawView = (DrawingView) findViewById(R.id.drawing);
         drawViewPoint = (DrawingPointView) findViewById(R.id.drawingPoint);
@@ -194,28 +180,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        rlPisos.setOnTouchListener(new View.OnTouchListener() {
-
-            @Override
-            public boolean onTouch(View arg0, MotionEvent arg1) {
-
-                //stringBuilder.setLength(0);
-                //si la acción que se recibe es de movimiento
-                if (arg1.getAction() == MotionEvent.ACTION_MOVE) {
-                    //stringBuilder.append("Moviendo, X:" + arg1.getX() + ", Y:" + arg1.getY() );
-                    Log.e("TAG", "Moviendo, X:" + arg1.getX() + ", Y:" + arg1.getY());
-                } else {
-                    Log.e("TAG", "Detenido, X:" + arg1.getX() + ", Y:" + arg1.getY());
-                }
-                //Se muestra en pantalla
-                //textView.setText( stringBuilder.toString() );
-                return true;
-            }
-
-
-        });
-
-
     }
 
     public void stairEvent() {
@@ -227,6 +191,25 @@ public class MainActivity extends AppCompatActivity {
 
         drawView.init(puntos, arregloRutaFinal, arregloStair, idCont);
         drawViewPoint.init(puntos, idCont);
+    }
+
+    public void  seeStair(){
+        btEscalera1.setVisibility(View.VISIBLE);
+        btEscalera2.setVisibility(View.VISIBLE);
+        btEscalera3.setVisibility(View.VISIBLE);
+        btEscalera4.setVisibility(View.VISIBLE);
+        btEscalera1.setEnabled(false);
+        btEscalera2.setEnabled(false);
+        btEscalera3.setEnabled(false);
+        btEscalera4.setEnabled(false);
+        btEscalera1.setX((float) (285 * ancho));
+        btEscalera1.setY((float) 183 * alto);
+        btEscalera2.setX((float) (975 * ancho));
+        btEscalera2.setY((float) 183 * alto);
+        btEscalera3.setX((float) (285 * ancho));
+        btEscalera3.setY((float) 795 * alto);
+        btEscalera4.setX((float) (975 * ancho));
+        btEscalera4.setY((float) 795 * alto);
     }
 
     public void cambiarFondoPiso() {
@@ -252,6 +235,7 @@ public class MainActivity extends AppCompatActivity {
                 end = Integer.parseInt(etFin.getText().toString()) - 1;
 
                 calcularRuta(start, end);
+                seeStair();
 
                 if (puntos.size() > 0) {
                     contadorPiso = 0;
@@ -292,7 +276,7 @@ public class MainActivity extends AppCompatActivity {
     public void calcularRuta(int a, int b) {
         Set<String> linkedHashSet = new LinkedHashSet<String>();
         edges.clear();
-        Log.e("TAG", "EDGES EDGES: " + arregloA.size());
+        //Log.e("TAG", "EDGES EDGES: " + arregloA.size());
         //////////////////////////////////////////AGREGA EDGES RESPECTO A CADA UNO DE LOS VERTICES///////////////////////////////////////////////////////////////////////////////////////
         for (int i = 0; i < arregloA.size(); i++) {
             Graph.Edge<String> ed = new Graph.Edge<String>((int) arregloCosto.get(i), vertices.get((int) arregloA.get(i)), vertices.get((int) arregloB.get(i)));
@@ -313,7 +297,7 @@ public class MainActivity extends AppCompatActivity {
 
         //////GENERAR RUTA FINAL//////////////////////////////
         stockList = astar.aStar(graph, vertices.get(a), vertices.get(b));
-        Log.e("TAG", "Stocklist " + stockList);
+        //Log.e("TAG", "Stocklist " + stockList);
         String ss = "";
         for (int i = 0; i < stockList.size(); i++) {
             ss = String.valueOf(stockList.get(i));
@@ -333,7 +317,7 @@ public class MainActivity extends AppCompatActivity {
             for (int j = 0; j < arregloIdRuta.size(); j++) {
                 if (arregloRutaFinal.get(i).equals(arregloIdRuta.get(j))) {
                     arregloFloorEnd.add(arregloFloor.get(j));
-                    Log.e("TAG", "ARREGLO PISO FINAL: " + arregloFloorEnd);
+                    //Log.e("TAG", "ARREGLO PISO FINAL: " + arregloFloorEnd);
                     if (arregloType.get(j).equals("stair")) {
                         arregloStair.add(i);
                     }
@@ -342,7 +326,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        Log.e("TAG", "ARREGLO STAIR" + arregloStair);
+        //Log.e("TAG", "ARREGLO STAIR" + arregloStair);
     }
 
     @Override
@@ -373,6 +357,7 @@ public class MainActivity extends AppCompatActivity {
             btEscalera1.setEnabled(true);
             btEscalera2.setEnabled(true);
             btEscalera3.setEnabled(true);
+            btEscalera4.setEnabled(true);
             contadorPiso = Integer.parseInt((String) arregloFloorEnd.get(idCont + 2));
         }
     }
