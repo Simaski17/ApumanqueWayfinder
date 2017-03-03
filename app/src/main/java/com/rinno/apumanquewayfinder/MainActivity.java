@@ -370,7 +370,6 @@ public class MainActivity extends AppCompatActivity {
         for (Map.Entry<String, Nodes> jugador : coordRect.entrySet()){
             float xx = (float) arregloLocationX.get(Integer.parseInt(String.valueOf(arregloRutaFinal.get(arregloRutaFinal.size() - 1))) - 1) ;
             float yy = (float) arregloLocationY.get(Integer.parseInt(String.valueOf(arregloRutaFinal.get(arregloRutaFinal.size() - 1))) - 1);
-            Log.e("TAG","AWAWAWAWAWW: "+xx );
             if(arregloRutaFinal.size() > 0) {
                 //String clave = jugador.getKey();
                 if (jugador.getKey().equals(arregloRutaFinal.get(arregloRutaFinal.size() - 1))) {
@@ -453,24 +452,17 @@ public class MainActivity extends AppCompatActivity {
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
     public void onMessageRect(Message event) {
         rect = event.getRect();
-        if (rect == 4 && !img.equals("null")){
-           // Log.e("TAG","DRAWDRAWDRAWDRAW: ");
-            dvImgStore.setVisibility(View.VISIBLE);
-            //dvImgStore.setX(994);
-            //dvImgStore.setY(175);
+        if (rect == 4){
             dvImgStore.setX(rectDib[6]);
             dvImgStore.setY(rectDib[7] + 1);
             int resta = rectDib[7] + 1;
             dvImgStore.getLayoutParams().width = (int) (rectDib[8] * ancho);
             dvImgStore.getLayoutParams().height = (int) (rectDib[9] * alto);
-            Log.e("TAG","ANNNNNNCHOOPOOOO: "+resta);
-            Uri uri = Uri.parse(img);
-            dvImgStore.setImageURI(uri);
-            drawViewPointEnd.setVisibility(View.VISIBLE);
-            drawViewRect.setVisibility(View.VISIBLE);
-            drawViewPointEnd.init(rectDib);
-            drawViewRect.init(rectDib);
-        }else{
+            if(img != null) {
+                Uri uri = Uri.parse(img);
+                dvImgStore.setImageURI(uri);
+                dvImgStore.setVisibility(View.VISIBLE);
+            }
             drawViewPointEnd.setVisibility(View.VISIBLE);
             drawViewRect.setVisibility(View.VISIBLE);
             drawViewPointEnd.init(rectDib);

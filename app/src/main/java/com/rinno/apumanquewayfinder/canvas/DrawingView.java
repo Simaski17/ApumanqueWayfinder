@@ -11,6 +11,7 @@ import android.graphics.Path;
 import android.graphics.PathEffect;
 import android.graphics.PathMeasure;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -100,9 +101,9 @@ public class DrawingView extends View {
         //Log.e("TAG","CONTADOR: "+cont);
 
         if(cont == 0 && arregloStair.size() == 0) {
-            //Log.e("TAG","ARREGLO RECT 1: "+arreglosegmentado);
-            contador  = cont;
             drawRect = 1;
+            Log.e("TAG","ARREGLO RECT 1: "+drawRect);
+            contador  = cont;
             for (int i = 0; i < arregloRuta.size(); i++) {
                 arreglorecorrido = (ArrayList) arreglosegmentado.get(0);
                 path.moveTo(coordx.get(cont), coordy.get(cont));
@@ -111,7 +112,7 @@ public class DrawingView extends View {
                 }
             }
         }else if(cont == 0) {
-            //Log.e("TAG","ARREGLO RECT 2: "+arreglosegmentado);
+            Log.e("TAG","ARREGLO RECT 2: "+drawRect);
             contador  = cont;
             for (int i = 0; i < arregloRuta.size(); i++) {
                 arreglorecorrido = (ArrayList) arreglosegmentado.get(0);
@@ -123,7 +124,7 @@ public class DrawingView extends View {
             }
         }else{
             drawRect = 1;
-            //Log.e("TAG","ARREGLO RECT 3: "+arreglosegmentado);
+            Log.e("TAG","ARREGLO RECT 3: "+drawRect);
             contador = cont +1;
             for (int i = 0; i < arregloRuta.size(); i++) {
                 arreglorecorrido = (ArrayList) arreglosegmentado.get(1);

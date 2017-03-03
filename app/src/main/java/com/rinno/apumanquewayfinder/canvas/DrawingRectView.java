@@ -8,7 +8,6 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PathMeasure;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 
 /**
@@ -25,6 +24,8 @@ public class DrawingRectView extends View {
     private int Yi = 0;
     private int Xf = 0;
     private int Yf = 0;
+    private int xx = 0;
+    private int yy = 0;
 
     final AnimatorSet mAnimationSet = new AnimatorSet();
 
@@ -50,7 +51,8 @@ public class DrawingRectView extends View {
         Yi =   rectDib[1];
         Xf =  rectDib[2];
         Yf =  rectDib[3];
-        Log.e("TAG","VALOR DESDE DRAW RECT "+Xi);
+        xx =  rectDib[4];
+        yy =  rectDib[5];
         paint2 = new Paint();
         paint2.setColor(Color.BLUE);
         //paint2.setStrokeWidth(3);
@@ -70,6 +72,7 @@ public class DrawingRectView extends View {
     {
         super.onDraw(c);
         c.drawPath(path, paint2);
+        //c.drawCircle(xx, yy, 10, paint2);
         c.drawRect(Xi, Yi, Xf, Yf,paint2);
         //c.drawRect(903,658,963,708,paint2);
     }
