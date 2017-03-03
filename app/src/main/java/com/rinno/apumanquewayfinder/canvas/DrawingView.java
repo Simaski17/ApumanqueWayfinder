@@ -11,7 +11,6 @@ import android.graphics.Path;
 import android.graphics.PathEffect;
 import android.graphics.PathMeasure;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -32,6 +31,7 @@ public class DrawingView extends View {
     Paint paint;
     Paint paint2;
     float length;
+    public String stair;
     ObjectAnimator animator;
 
     public ArrayList<Float> coordx = new ArrayList<Float>();
@@ -40,6 +40,7 @@ public class DrawingView extends View {
     ArrayList arreglosegmentado = new ArrayList();
     ArrayList arreglorecorrido = new ArrayList();
     int contador;
+    int drawRect;
 
 
     public DrawingView(Context context)
@@ -58,8 +59,10 @@ public class DrawingView extends View {
     }
 
 
-    public void init(List<Nodes> puntos, ArrayList arregloRuta, ArrayList arregloStair, int cont)
+    public void init(List<Nodes> puntos, ArrayList arregloRuta, ArrayList arregloStair, int cont, final int[] rectDib)
     {
+        drawRect = 0;
+        stair = "stair";
         arreglosegmentado.clear();
         coordx = new ArrayList<>();
         coordy = new ArrayList<>();
@@ -93,11 +96,13 @@ public class DrawingView extends View {
             arreglotemporal = new ArrayList();
         }
 
-        Log.e("TAG","ArregloTemporal: "+arreglosegmentado);
+        //Log.e("TAG","ARREGLOFINAL: "+arreglosegmentado);
         //Log.e("TAG","CONTADOR: "+cont);
 
         if(cont == 0 && arregloStair.size() == 0) {
+            //Log.e("TAG","ARREGLO RECT 1: "+arreglosegmentado);
             contador  = cont;
+            drawRect = 1;
             for (int i = 0; i < arregloRuta.size(); i++) {
                 arreglorecorrido = (ArrayList) arreglosegmentado.get(0);
                 path.moveTo(coordx.get(cont), coordy.get(cont));
@@ -106,6 +111,7 @@ public class DrawingView extends View {
                 }
             }
         }else if(cont == 0) {
+            //Log.e("TAG","ARREGLO RECT 2: "+arreglosegmentado);
             contador  = cont;
             for (int i = 0; i < arregloRuta.size(); i++) {
                 arreglorecorrido = (ArrayList) arreglosegmentado.get(0);
@@ -116,6 +122,8 @@ public class DrawingView extends View {
                 }
             }
         }else{
+            drawRect = 1;
+            //Log.e("TAG","ARREGLO RECT 3: "+arreglosegmentado);
             contador = cont +1;
             for (int i = 0; i < arregloRuta.size(); i++) {
                 arreglorecorrido = (ArrayList) arreglosegmentado.get(1);
@@ -127,6 +135,17 @@ public class DrawingView extends View {
             }
         }
 
+        if(arreglorecorrido.get(arreglorecorrido.size() -1).equals("8") || arreglorecorrido.get(arreglorecorrido.size() -1).equals("55") || arreglorecorrido.get(arreglorecorrido.size() -1).equals("393")){
+            stair = "uno";
+        }else if(arreglorecorrido.get(arreglorecorrido.size() -1).equals("5") || arreglorecorrido.get(arreglorecorrido.size() -1).equals("56") || arreglorecorrido.get(arreglorecorrido.size() -1).equals("395")){
+            stair = "dos";
+        }else if(arreglorecorrido.get(arreglorecorrido.size() -1).equals("7") || arreglorecorrido.get(arreglorecorrido.size() -1).equals("57") || arreglorecorrido.get(arreglorecorrido.size() -1).equals("394")){
+            stair = "tres";
+        }else if(arreglorecorrido.get(arreglorecorrido.size() -1).equals("6") || arreglorecorrido.get(arreglorecorrido.size() -1).equals("58") || arreglorecorrido.get(arreglorecorrido.size() -1).equals("396")){
+            stair = "cuatro";
+        }else{
+            stair = "stair";
+        }
         // Measure the path
         PathMeasure measure = new PathMeasure(path, false);
         length = measure.getLength();
@@ -144,10 +163,11 @@ public class DrawingView extends View {
 
             @Override
             public void onAnimationEnd(Animator animation) {
-                //Log.e("TAG","POS FINAL X: "+coordx.get(finalCont));
-                Toast.makeText(getContext(), "Final", Toast.LENGTH_SHORT).show();
-                EventBus.getDefault().postSticky(new Message(finalCont));
-                //Log.e("TAG", "FINAL CONT: " + finalCont);
+                if(drawRect == 1){
+                    EventBus.getDefault().postSticky(new Message(4));
+                }
+                Toast.makeText(getContext(), "Final "+stair, Toast.LENGTH_SHORT).show();
+                EventBus.getDefault().postSticky(new Message(finalCont, stair));
             }
 
             @Override

@@ -26,13 +26,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"></RelativeLayout>
 
-        <com.rinno.apumanquewayfinder.canvas.DrawingPointEndView
-            android:id="@+id/drawingPointEnd"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:visibility="gone"/>
-
         <com.rinno.apumanquewayfinder.canvas.DrawingPointView
             android:id="@+id/drawingPoint"
             android:layout_width="match_parent"
@@ -47,11 +40,6 @@
             android:layout_weight="1"
             android:visibility="gone"/>
 
-        <com.facebook.drawee.view.SimpleDraweeView
-            android:id="@+id/dvImgStore"
-            android:layout_width="130dp"
-            android:layout_height="130dp"/>
-
         <include layout="@layout/stairs"/>
 
     </RelativeLayout>
@@ -60,6 +48,8 @@
         android:id="@+id/ivContinuarRuta"
         android:layout_width="130dp"
         android:layout_height="130dp"
-        fresco:placeholderImage="@drawable/mano"/>
+        fresco:placeholderImage="@drawable/mano"
+        />
+
 
 </RelativeLayout>

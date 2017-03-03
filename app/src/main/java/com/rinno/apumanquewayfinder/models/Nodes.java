@@ -8,6 +8,7 @@ public class Nodes {
 
     private String floor;
     private String id;
+    private String img;
     private int locationX;
     private int locationY;
     private int locationZ;
@@ -15,6 +16,10 @@ public class Nodes {
     private float RectW;
     private float RectX;
     private float RectY;
+    private float imgH;
+    private float imgW;
+    private float imgX;
+    private float imgY;
     private String type;
 
     public Nodes(){
@@ -26,17 +31,27 @@ public class Nodes {
         this.locationY = (int) locationY;
     }
 
-    public Nodes(String floor, String id, int locationX, int locationY, int locationZ, String type, float RectH, float RectW, float RectX, float RectY){
+    public Nodes(String floor, String id, int locationX, int locationY, int locationZ, String type){
         this.floor = floor;
         this.id = id;
         this.locationX = locationX;
         this.locationY = locationY;
         this.locationZ = locationZ;
         this.type = type;
-        this.RectH = RectH;
-        this.RectW = RectW;
+    }
+
+    public Nodes(String id, float RectX, float RectY , float RectW,  float RectH, String img, float imgX, float imgY , float imgW,  float imgH){
+        this.id = id;
         this.RectX = RectX;
         this.RectY = RectY;
+        this.RectW = RectW;
+        this.RectH = RectH;
+        this.img = img;
+        this.imgX = imgX;
+        this.imgY = imgY;
+        this.imgW = imgW;
+        this.imgH = imgH;
+
     }
 
     public String getFloor() {
@@ -117,5 +132,45 @@ public class Nodes {
 
     public void setRectY(float rectY) {
         RectY = rectY;
+    }
+
+    public String getImg() {
+        return img;
+    }
+
+    public void setImg(String img) {
+        this.img = img;
+    }
+
+    public float getImgH() {
+        return imgH;
+    }
+
+    public void setImgH(float imgH) {
+        this.imgH = imgH;
+    }
+
+    public float getImgW() {
+        return imgW;
+    }
+
+    public void setImgW(float imgW) {
+        this.imgW = imgW;
+    }
+
+    public float getImgX() {
+        return imgX;
+    }
+
+    public void setImgX(float imgX) {
+        this.imgX = imgX;
+    }
+
+    public float getImgY() {
+        return imgY;
+    }
+
+    public void setImgY(float imgY) {
+        this.imgY = imgY;
     }
 }

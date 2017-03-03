@@ -171,7 +171,7 @@ public class MapaActivity extends AppCompatActivity {
                     drawView.setVisibility(View.VISIBLE);
                     drawViewPoint.setVisibility(View.VISIBLE);
 
-                    drawView.init(puntos, arregloRutaFinal, arregloStair, idCont);
+                    //drawView.init(puntos, arregloRutaFinal, arregloStair, idCont);
                     drawViewPoint.init(puntos, idCont);
                 }
             }
@@ -231,7 +231,7 @@ public class MapaActivity extends AppCompatActivity {
         drawView.setVisibility(View.VISIBLE);
         drawViewPoint.setVisibility(View.VISIBLE);
 
-        drawView.init(puntos, arregloRutaFinal, arregloStair, idCont);
+        //drawView.init(puntos, arregloRutaFinal, arregloStair, idCont);
         drawViewPoint.init(puntos, idCont);
     }
 
@@ -339,3 +339,45 @@ public class MapaActivity extends AppCompatActivity {
     }
 }
 
+
+
+//draweeView.getLayoutParams().height = (int) (69 * alto);
+//        //draweeView.getLayoutParams().height = (int) (112 * alto);
+//        draweeView.getLayoutParams().width = (int) (77 * ancho);
+////draweeView.getLayoutParams().width = (int) (69 * ancho);
+
+
+//    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
+//    public void onMessage(Message event) {
+//        idCont = event.getCont();
+//        idStair = event.getStair();
+//        if (idCont > 0 && idStair.equals("uno")) {
+//            manoStair(490 * ancho, 220 * ancho);
+//            btEscalera1.setEnabled(true);
+//            contadorPiso = Integer.parseInt((String) arregloFloorEnd.get(idCont + 2));
+//        } else if (idCont > 0 && idStair.equals("dos")) {
+//            manoStair(1060 * ancho, 220 * ancho);
+//            btEscalera2.setEnabled(true);
+//            contadorPiso = Integer.parseInt((String) arregloFloorEnd.get(idCont + 2));
+//        } else if (idCont > 0 && idStair.equals("tres")) {
+//            manoStair(490 * ancho, 730 * ancho);
+//            btEscalera3.setEnabled(true);
+//            contadorPiso = Integer.parseInt((String) arregloFloorEnd.get(idCont + 2));
+//        } else if (idCont > 0 && idStair.equals("cuatro")) {
+//            //244manoStair((float) (1028.18 * 0.967), (float) (66.03 * 2.65));
+//            //305manoStair((float) (836.43 * 0.967), (float) (198.95 * 2.65));
+//            //manoStair(846, 277);
+//            manoStair(994, 175);
+//            btEscalera4.setEnabled(true);
+//            contadorPiso = Integer.parseInt((String) arregloFloorEnd.get(idCont + 2));
+//        }
+//    }
+
+
+//    //Uri uri = Uri.parse("https://firebasestorage.googleapis.com/v0/b/apumanque-9a680.appspot.com/o/mapNodesImage%2F244%403x.png?alt=media&token=4b147541-52cb-48b5-9d16-5023f49118e3");
+//    Uri uri = Uri.parse("https://firebasestorage.googleapis.com/v0/b/apumanque-9a680.appspot.com/o/mapNodesImage%2F305%403x.png?alt=media&token=6e7cb217-79f8-4ae9-8a51-a52356b464a8");
+//draweeView = (SimpleDraweeView) findViewById(R.id.ivContinuarRuta);
+
+//    Uri uri = Uri.parse("https://firebasestorage.googleapis.com/v0/b/apumanque-9a680.appspot.com/o/mapNodesImage%2F305%403x.png?alt=media&token=6e7cb217-79f8-4ae9-8a51-a52356b464a8");
+//draweeView = (SimpleDraweeView) findViewById(R.id.ivContinuarRuta);
+//        draweeView.setImageURI(uri);

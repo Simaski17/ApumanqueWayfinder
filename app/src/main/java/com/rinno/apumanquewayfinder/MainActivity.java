@@ -1,7 +1,9 @@
 package com.rinno.apumanquewayfinder;
 
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -12,6 +14,8 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.facebook.drawee.backends.pipeline.Fresco;
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -19,7 +23,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.rinno.apumanquewayfinder.algoritmo.Astar;
 import com.rinno.apumanquewayfinder.algoritmo.Graph;
+import com.rinno.apumanquewayfinder.canvas.DrawingPointEndView;
 import com.rinno.apumanquewayfinder.canvas.DrawingPointView;
+import com.rinno.apumanquewayfinder.canvas.DrawingRectView;
 import com.rinno.apumanquewayfinder.canvas.DrawingView;
 import com.rinno.apumanquewayfinder.models.Edges;
 import com.rinno.apumanquewayfinder.models.Message;
@@ -30,13 +36,16 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.Optional;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -54,6 +63,10 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList arregloRutaFinal = new ArrayList();
     private ArrayList arregloFloor = new ArrayList();
     private ArrayList arregloFloorEnd = new ArrayList();
+    private   int[ ]   rectDib = new  int[10];
+    private String img;
+
+    Map<String, Nodes> coordRect = new HashMap<String, Nodes>();
 
     private List<String> stockList = new ArrayList<String>();
     List<Nodes> puntos = new ArrayList<Nodes>();
@@ -61,8 +74,10 @@ public class MainActivity extends AppCompatActivity {
     private int start;
     private int end;
     private int idCont;
+    private int rect;
+    private String idStair;
     private int contadorPiso = 0;
-    private double ancho;
+    private float ancho;
     private float alto;
 
     DatabaseReference referenceNodes;
@@ -71,8 +86,13 @@ public class MainActivity extends AppCompatActivity {
     //custom drawing view
     private DrawingView drawView;
     private DrawingPointView drawViewPoint;
+    private DrawingPointEndView drawViewPointEnd;
+    private DrawingRectView drawViewRect;
 
     static boolean calledAlready = false;
+    private SimpleDraweeView draweeView;
+    private SimpleDraweeView dvImgStore;
+
 
     @BindView(R.id.tvInicio)
     TextView tvInicio;
@@ -84,39 +104,56 @@ public class MainActivity extends AppCompatActivity {
     EditText etFin;
     @BindView(R.id.btIr)
     Button btIr;
-
-    @BindView(R.id.btEscalera1)
-    ImageView btEscalera1;
-    @BindView(R.id.btEscalera2)
-    ImageView btEscalera2;
-    @BindView(R.id.btEscalera3)
-    ImageView btEscalera3;
-    @BindView(R.id.rlPisos)
-    RelativeLayout rlPisos;
-    @BindView(R.id.btEscalera4)
-    ImageView btEscalera4;
-
     @BindView(R.id.activity_main)
     RelativeLayout activityMain;
+
+    @Nullable
+    @BindView(R.id.btEscalera1)
+    ImageView btEscalera1;
+    @Nullable
+    @BindView(R.id.btEscalera2)
+    ImageView btEscalera2;
+    @Nullable
+    @BindView(R.id.btEscalera3)
+    ImageView btEscalera3;
+    @Nullable
+    @BindView(R.id.btEscalera4)
+    ImageView btEscalera4;
+    @Nullable
+    @BindView(R.id.rlPisos)
+    RelativeLayout rlPisos;
+    float suma;
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Fresco.initialize(this);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
-        ancho = (float) (965 + 80) /1254;
-        alto = (float) (783 + 120) /1080;
+
+        draweeView = (SimpleDraweeView) findViewById(R.id.ivContinuarRuta);
+        draweeView.setVisibility(View.GONE);
+
+        dvImgStore = (SimpleDraweeView) findViewById(R.id.dvImgStore);
+        dvImgStore.setVisibility(View.GONE);
+
+        ancho = (float) 965 / 1254 + (float) 0.001;
+        alto = (float) 831 / 1080 + (float) 0.001;
+
 
         //get drawing view
         drawView = (DrawingView) findViewById(R.id.drawing);
         drawViewPoint = (DrawingPointView) findViewById(R.id.drawingPoint);
+        drawViewPointEnd = (DrawingPointEndView) findViewById(R.id.drawingPointEnd);
+        drawViewRect = (DrawingRectView) findViewById(R.id.drawingRect);
         drawView.setVisibility(View.GONE);
         drawViewPoint.setVisibility(View.GONE);
+        drawViewPointEnd.setVisibility(View.GONE);
+        drawViewRect.setVisibility(View.GONE);
 
-        if (!calledAlready)
-        {
+        if (!calledAlready) {
             FirebaseDatabase.getInstance().setPersistenceEnabled(true);
             calledAlready = true;
         }
@@ -134,12 +171,12 @@ public class MainActivity extends AppCompatActivity {
                     Nodes nod = dataSnapshot.child(String.valueOf(i)).getValue(Nodes.class);
                     Graph.Vertex<String> a = new Graph.Vertex<String>(nod.getId());
                     arregloIdRuta.add(nod.getId());
-//                    arregloLocationX.add(Float.parseFloat(String.valueOf(nod.getLocationX())));
-//                    arregloLocationY.add(Float.parseFloat(String.valueOf(nod.getLocationY())));
-                    arregloLocationX.add(Float.parseFloat(String.valueOf(nod.getLocationX() * ancho)));
-                    arregloLocationY.add(Float.parseFloat(String.valueOf(nod.getLocationY() * alto)));
+                    arregloLocationX.add(Float.parseFloat(String.valueOf((nod.getLocationX() * ancho) +  5)));
+                    arregloLocationY.add(Float.parseFloat(String.valueOf((nod.getLocationY() * alto)+ 5)));
                     arregloType.add(String.valueOf(nod.getType()));
                     arregloFloor.add(String.valueOf(nod.getFloor()));
+                    coordRect.put(nod.getId(), new Nodes(nod.getId(), nod.getRectX() * ancho, nod.getRectY() * ancho , ((nod.getRectX() * ancho) + (nod.getRectW() * ancho)) ,((nod.getRectY() * ancho) + (nod.getRectH() * ancho)),
+                    nod.getImg(), nod.getImgX() * ancho, nod.getImgY() * ancho, nod.getImgW(), nod.getImgH()));
                     vertices.add(a);
                 }
             }
@@ -180,20 +217,33 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+
+        draweeView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                cambiarFondoPiso();
+                stairEvent();
+            }
+        });
+
     }
 
     public void stairEvent() {
+        draweeView.setVisibility(View.GONE);
         drawView.setVisibility(View.GONE);
         drawViewPoint.setVisibility(View.GONE);
+        //drawViewRect.setVisibility(View.GONE);
 
         drawView.setVisibility(View.VISIBLE);
         drawViewPoint.setVisibility(View.VISIBLE);
+        //drawViewRect.setVisibility(View.VISIBLE);
 
-        drawView.init(puntos, arregloRutaFinal, arregloStair, idCont);
+        drawView.init(puntos, arregloRutaFinal, arregloStair, idCont, rectDib);
         drawViewPoint.init(puntos, idCont);
+        //drawViewRect.init();
     }
 
-    public void  seeStair(){
+    public void seeStair() {
         btEscalera1.setVisibility(View.VISIBLE);
         btEscalera2.setVisibility(View.VISIBLE);
         btEscalera3.setVisibility(View.VISIBLE);
@@ -222,14 +272,18 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+
+    @Optional
     @OnClick({R.id.btIr, R.id.btEscalera1, R.id.btEscalera2, R.id.btEscalera3, R.id.btEscalera4, R.id.rlPisos})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btIr:
-                Log.e("TAG","ANCHO "+arregloLocationX.get(10) + " ALTO "+arregloLocationY.get(10));
                 idCont = 0;
+                dvImgStore.setVisibility(View.GONE);
                 drawView.setVisibility(View.GONE);
                 drawViewPoint.setVisibility(View.GONE);
+                drawViewPointEnd.setVisibility(View.GONE);
+                drawViewRect.setVisibility(View.GONE);
 
                 start = Integer.parseInt(etInicio.getText().toString()) - 1;
                 end = Integer.parseInt(etFin.getText().toString()) - 1;
@@ -244,14 +298,11 @@ public class MainActivity extends AppCompatActivity {
                     drawView.setVisibility(View.VISIBLE);
                     drawViewPoint.setVisibility(View.VISIBLE);
 
-                    drawView.init(puntos, arregloRutaFinal, arregloStair, idCont);
+                    drawView.init(puntos, arregloRutaFinal, arregloStair, idCont, rectDib);
                     drawViewPoint.init(puntos, idCont);
 
                     etInicio.setText("");
                     etFin.setText("");
-
-                    Log.e("TAG", "VERTICES--> " + vertices.size());
-                    Log.e("TAG", "EDGES--> " + arregloA.size());
 
                 }
                 break;
@@ -267,6 +318,10 @@ public class MainActivity extends AppCompatActivity {
                 cambiarFondoPiso();
                 stairEvent();
                 break;
+            case R.id.btEscalera4:
+                cambiarFondoPiso();
+                stairEvent();
+                break;
             case R.id.rlPisos:
                 //Button b;
                 break;
@@ -274,6 +329,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void calcularRuta(int a, int b) {
+        draweeView.setVisibility(View.GONE);
         Set<String> linkedHashSet = new LinkedHashSet<String>();
         edges.clear();
         //Log.e("TAG", "EDGES EDGES: " + arregloA.size());
@@ -283,7 +339,6 @@ public class MainActivity extends AppCompatActivity {
             edges.add(ed);
         }
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 
 
         ////////////////////////////////////////////
@@ -310,6 +365,22 @@ public class MainActivity extends AppCompatActivity {
         arregloRutaFinal.addAll(linkedHashSet);
         //Log.e("TAG", "RUTA FINAL " + arregloRutaFinal);
         ///////////////////////////////////////////////////////////////////
+
+        //////////////////////////COORD DIBUJO RECTANGULO///////////////////////////////////////////////////////////////////////////////////////////
+        for (Map.Entry<String, Nodes> jugador : coordRect.entrySet()){
+            float xx = (float) arregloLocationX.get(Integer.parseInt(String.valueOf(arregloRutaFinal.get(arregloRutaFinal.size() - 1))) - 1) ;
+            float yy = (float) arregloLocationY.get(Integer.parseInt(String.valueOf(arregloRutaFinal.get(arregloRutaFinal.size() - 1))) - 1);
+            Log.e("TAG","AWAWAWAWAWW: "+xx );
+            if(arregloRutaFinal.size() > 0) {
+                //String clave = jugador.getKey();
+                if (jugador.getKey().equals(arregloRutaFinal.get(arregloRutaFinal.size() - 1))) {
+                    img = jugador.getValue().getImg();
+                    rectDib = new int[]{(int) jugador.getValue().getRectX(),(int)  jugador.getValue().getRectY(),(int)  jugador.getValue().getRectW(),(int)  jugador.getValue().getRectH(), (int) xx, (int) yy,
+                            (int) jugador.getValue().getImgX(),(int)  jugador.getValue().getImgY(),(int)  jugador.getValue().getImgW(),(int)  jugador.getValue().getImgH()};  //Array de 4 elementos
+                }
+            }
+        }
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         //////DETERMINAR ESCALERAS ENCONTRADAS EN LA RUTA OPTIMA y AGREGA PUNTOS DONDE SE DIBUJARA LA RUTA/////////////////////////////
         puntos = new ArrayList<>();
@@ -350,15 +421,60 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    public void manoStair(float x, float y) {
+        draweeView.setVisibility(View.VISIBLE);
+        draweeView.setX(x);
+        draweeView.setY(y);
+    }
+
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
     public void onMessage(Message event) {
         idCont = event.getCont();
-        if (idCont > 0) {
+        idStair = event.getStair();
+        if (idCont > 0 && idStair.equals("uno")) {
+            manoStair(490 * ancho, 220 * ancho);
             btEscalera1.setEnabled(true);
+            contadorPiso = Integer.parseInt((String) arregloFloorEnd.get(idCont + 2));
+        } else if (idCont > 0 && idStair.equals("dos")) {
+            manoStair(1060 * ancho, 220 * ancho);
             btEscalera2.setEnabled(true);
+            contadorPiso = Integer.parseInt((String) arregloFloorEnd.get(idCont + 2));
+        } else if (idCont > 0 && idStair.equals("tres")) {
+            manoStair(490 * ancho, 730 * ancho);
             btEscalera3.setEnabled(true);
+            contadorPiso = Integer.parseInt((String) arregloFloorEnd.get(idCont + 2));
+        } else if (idCont > 0 && idStair.equals("cuatro")) {
+            manoStair(1020 * ancho,730 * ancho);
             btEscalera4.setEnabled(true);
             contadorPiso = Integer.parseInt((String) arregloFloorEnd.get(idCont + 2));
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
+    public void onMessageRect(Message event) {
+        rect = event.getRect();
+        if (rect == 4 && !img.equals("null")){
+           // Log.e("TAG","DRAWDRAWDRAWDRAW: ");
+            dvImgStore.setVisibility(View.VISIBLE);
+            //dvImgStore.setX(994);
+            //dvImgStore.setY(175);
+            dvImgStore.setX(rectDib[6]);
+            dvImgStore.setY(rectDib[7] + 1);
+            int resta = rectDib[7] + 1;
+            dvImgStore.getLayoutParams().width = (int) (rectDib[8] * ancho);
+            dvImgStore.getLayoutParams().height = (int) (rectDib[9] * alto);
+            Log.e("TAG","ANNNNNNCHOOPOOOO: "+resta);
+            Uri uri = Uri.parse(img);
+            dvImgStore.setImageURI(uri);
+            drawViewPointEnd.setVisibility(View.VISIBLE);
+            drawViewRect.setVisibility(View.VISIBLE);
+            drawViewPointEnd.init(rectDib);
+            drawViewRect.init(rectDib);
+        }else{
+            drawViewPointEnd.setVisibility(View.VISIBLE);
+            drawViewRect.setVisibility(View.VISIBLE);
+            drawViewPointEnd.init(rectDib);
+            drawViewRect.init(rectDib);
         }
     }
 
@@ -366,5 +482,9 @@ public class MainActivity extends AppCompatActivity {
     public void onBackPressed() {
         super.onBackPressed();
 
+    }
+
+    @OnClick(R.id.btIr)
+    public void onClick() {
     }
 }
