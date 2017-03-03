@@ -97,9 +97,6 @@ public class DrawingView extends View {
             arreglotemporal = new ArrayList();
         }
 
-        //Log.e("TAG","ARREGLOFINAL: "+arreglosegmentado);
-        //Log.e("TAG","CONTADOR: "+cont);
-
         if(cont == 0 && arregloStair.size() == 0) {
             drawRect = 1;
             Log.e("TAG","ARREGLO RECT 1: "+drawRect);

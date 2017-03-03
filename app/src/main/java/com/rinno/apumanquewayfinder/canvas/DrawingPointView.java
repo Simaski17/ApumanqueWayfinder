@@ -24,7 +24,6 @@ import java.util.List;
 
 public class DrawingPointView extends View {
     Path path;
-    Paint paint;
     Paint paint2;
     float length;
     int contador;

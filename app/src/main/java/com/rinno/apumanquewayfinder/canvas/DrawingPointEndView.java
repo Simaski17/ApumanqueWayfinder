@@ -46,15 +46,12 @@ public class DrawingPointEndView extends View {
         yy =  rectDib[5];
         paint2 = new Paint();
         paint2.setColor(Color.BLUE);
-        //paint2.setStrokeWidth(3);
 
         path = new Path();
 
 
         PathMeasure measure = new PathMeasure(path, false);
         length = measure.getLength();
-
-        //float[] intervals = new float[]{length, length};
 
     }
 
