@@ -16,14 +16,117 @@
         android:weightSum="6">
 
         <LinearLayout
+            android:orientation="vertical"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:background="#ffffff"
-            android:layout_weight="1.05">
+            android:layout_weight="1.05"
+            android:weightSum="9">
 
-            <include layout="@layout/header_route"/>
+            <LinearLayout
+                android:id="@+id/llLogoApumanque"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="2.3"
+                android:background="#98c7ed">
+
+                <include layout="@layout/header_route"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/llMapa"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="0.97"
+                android:background="#ffffff">
+
+                <TextView
+                    android:text="Mapa"
+                    android:gravity="center"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/llTiendas"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="0.97"
+                android:background="#98c7ed">
+
+                <TextView
+                    android:text="Tiendas"
+                    android:gravity="center"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/llComida"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="0.97"
+                android:background="#ffffff">
+
+                <TextView
+                    android:text="Comida"
+                    android:gravity="center"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/llDescuentos"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="0.97"
+                android:background="#98c7ed">
+
+                <TextView
+                    android:text="Descuentos"
+                    android:gravity="center"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/llParticipa"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="0.97"
+                android:background="#ffffff">
+
+                <TextView
+                    android:text="Participa y gana"
+                    android:gravity="center"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1.85"
+                android:background="#98c7ed">
+
+                <TextView
+                    android:text="Area de busqueda"
+                    android:gravity="center"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+            </LinearLayout>
 
         </LinearLayout>
+
+
+
+
 
         <LinearLayout
             android:layout_width="0dp"
@@ -34,11 +137,205 @@
 
         </LinearLayout>
 
+
+
+
+
         <LinearLayout
+            android:orientation="vertical"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:background="#ffffff"
-            android:layout_weight="0.74">
+            android:layout_weight="0.74"
+            android:weightSum="14">
+            
+            <LinearLayout
+                android:id="@+id/llPisoUno"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1.05"
+                android:background="#67d15c">
+
+                <TextView
+                    android:text="P3"
+                    android:gravity="center"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/llPisoDos"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1.05"
+                android:background="#f4dc57">
+
+                <TextView
+                    android:text="P2"
+                    android:gravity="center"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/llPisoTres"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1.05"
+                android:background="#7cb7fa">
+
+                <TextView
+                    android:text="P1"
+                    android:gravity="center"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/llServicios"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1.5"
+                android:background="#ffffff">
+
+                <TextView
+                    android:text="SERVICIOS"
+                    android:gravity="center"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/llInformacion"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="0.93"
+                android:background="#ff921f">
+
+                <TextView
+                    android:text="Informacion"
+                    android:gravity="center"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/llBanosDama"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="0.93"
+                android:background="#ffffff">
+
+                <TextView
+                    android:text="Baños Damas"
+                    android:gravity="center"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/llBanosCaballeros"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="0.93"
+                android:background="#ff921f">
+
+                <TextView
+                    android:text="Baños Caballeros"
+                    android:gravity="center"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/llCajeros"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="0.93"
+                android:background="#ffffff">
+
+                <TextView
+                    android:text="Cajeros"
+                    android:gravity="center"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/llAscensor"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="0.93"
+                android:background="#ff921f">
+
+                <TextView
+                    android:text="Ascensor"
+                    android:gravity="center"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/llCochesSillas"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="0.93"
+                android:background="#ffffff">
+
+                <TextView
+                    android:text="Coches y Sillas de Ruedas"
+                    android:gravity="center"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/llGuardaPeques"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="0.93"
+                android:background="#ff921f">
+
+                <TextView
+                    android:text="Guardapeques"
+                    android:gravity="center"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/llDescuentosPromociones"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="0.93"
+                android:background="#ffffff">
+
+                <TextView
+                    android:text="Descuentos"
+                    android:gravity="center"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1.91"
+                android:background="#ff921f">
+
+            </LinearLayout>
+            
 
         </LinearLayout>
 
