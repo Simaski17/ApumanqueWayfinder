@@ -133,16 +133,16 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        //////////////INICIALIZACION LIB FRESCO PARA MANEJO DE IMAGENES/////////////////////////////////////////////
+        /*INICIALIZACION LIB FRESCO PARA MANEJO DE IMAGENES*/
         Fresco.initialize(this);
 
-        ///////////////////////////CONTENEDOR PRINCIPAL DE LA ACTIVIDAD/////////////////////////////////////////////////
+        /*CONTENEDOR PRINCIPAL DE LA ACTIVIDAD*/
         setContentView(R.layout.activity_main);
 
-        //////////////INICIALIZACION LIB BUTTERKNIFE PARA INJECCION DE VISTAS/////////////////////////////////////////////
+        /*INICIALIZACION LIB BUTTERKNIFE PARA INJECCION DE VISTAS*/
         ButterKnife.bind(this);
 
-        //////////////////////////ESCALAR PARA DETERMINAR ANCHO Y ALTO CON EL CUAL SE TRABAJARA EN BASE A LAS MEDIDAS PRINCIPALES 1254x1080/////////////////
+        /*ESCALAR PARA DETERMINAR ANCHO Y ALTO CON EL CUAL SE TRABAJARA EN BASE A LAS MEDIDAS PRINCIPALES 1254x1080*/
         ancho = (float) 965 / 1254 + (float) 0.001;
         alto = (float) 831 / 1080 + (float) 0.001;
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -155,18 +155,18 @@ public class MainActivity extends AppCompatActivity {
         }
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        ////////////////////////////Imagen Dinamica. Cambia con relacion a la escalera habilitada//////////////////////////////
+       /*Imagen Dinamica. Cambia con relacion a la escalera habilitada*/
         draweeView = (SimpleDraweeView) findViewById(R.id.ivContinuarRuta);
         draweeView.setVisibility(View.GONE);
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        ////////////////////////////Imagen Dinamica. Cambia con relacion a la tienda. Si la tienda no es un cuadrado perfecto se utiliza esta imagen para iluminarla//////////////////////////////
+        /*Imagen Dinamica. Cambia con relacion a la tienda. Si la tienda no es un cuadrado perfecto se utiliza esta imagen para iluminarla*/
         dvImgStore = (SimpleDraweeView) findViewById(R.id.dvImgStore);
         dvImgStore.setVisibility(View.GONE);
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-        /////////////////////////////////////////////////////////INICIALIZAR CANVAS PARA LOS DIBUJOS//////////////////////////////////////////////////////////////////////////////////////////////
+        /*INICIALIZAR CANVAS PARA LOS DIBUJOS*/
         drawView = (DrawingView) findViewById(R.id.drawing); //Ruta Principal
         drawViewPoint = (DrawingPointView) findViewById(R.id.drawingPoint); //Punto de inicio de la ruta y animacion fade-in fade-out
         drawViewPointEnd = (DrawingPointEndView) findViewById(R.id.drawingPointEnd); //Punto final donde termina la ruta
@@ -184,7 +184,7 @@ public class MainActivity extends AppCompatActivity {
         referenceEdges.keepSynced(true);
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
+        /*Evento click icono continuar ruta*/
         draweeView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -199,7 +199,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
 
-         /*CONEXION DEL NODO (Nodes) DESDE FIREBASE. CAPTURA DE DATOS A UTILIZAR POR LA APP*/
+         /*CONEXION DEL NODO (Nodes) DESDE FIREBASE. CAPTURA DE DATOS A UTILIZAR POR LA APP.
+         *
+         * Deberia utilzarse AsyncTask para el llamado de estos datos a la base de datos y asi quitarle carga de trabajo a la actividad.
+         * */
         referenceNodes.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -226,7 +229,9 @@ public class MainActivity extends AppCompatActivity {
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-         /*CONEXION DEL NODO (Edges) DESDE FIREBASE. CAPTURA DE DATOS A UTILIZAR POR LA APP*/
+         /*
+         *CONEXION DEL NODO (Edges) DESDE FIREBASE. CAPTURA DE DATOS A UTILIZAR POR LA APP
+         */
         referenceEdges.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -261,7 +266,9 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    /*FUNCION UTILIZADA SI EN LA RUTA HAY UN CAMBIO DE PISO Y SE LLEGA HASTA UNA ESCALERA*/
+    /*
+    *FUNCION UTILIZADA SI EN LA RUTA HAY UN CAMBIO DE PISO Y SE LLEGA HASTA UNA ESCALERA
+    */
     public void stairEvent() {
         draweeView.setVisibility(View.GONE);
         drawView.setVisibility(View.GONE);
@@ -294,6 +301,10 @@ public class MainActivity extends AppCompatActivity {
         btEscalera4.setY((float) 795 * alto);
     }
 
+
+    /*
+    *Se realiza el cambio de piso de piso dependiendo del valor de la variable contadorPiso.
+    */
     public void cambiarFondoPiso() {
         if (contadorPiso == 1) {
             rlPisos.setBackgroundDrawable(getResources().getDrawable(R.drawable.mapauno));
@@ -360,13 +371,17 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    ///////////////////////////////////////////////////FUNCION CALCULAR RUTA FINAL//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /*
+    *FUNCION CALCULAR RUTA FINAL
+    */
     public void calcularRuta(int a, int b) {
         draweeView.setVisibility(View.GONE);
         Set<String> linkedHashSet = new LinkedHashSet<String>();
         edges.clear();
 
-        //////////////////////////////////////////AGREGA EDGES RESPECTO A CADA UNO DE LOS VERTICES///////////////////////////////////////////////////////////////////////////////////////
+        /*
+        AGREGA EDGES RESPECTO A CADA UNO DE LOS VERTICES
+        */
         for (int i = 0; i < arregloA.size(); i++) {
             Graph.Edge<String> ed = new Graph.Edge<String>((int) arregloCosto.get(i), vertices.get((int) arregloA.get(i)), vertices.get((int) arregloB.get(i)));
             edges.add(ed);
@@ -374,11 +389,15 @@ public class MainActivity extends AppCompatActivity {
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-        ////////////////////////////////////////////PASAMOS VERTICES Y EDGES USANDO LA CLASE GRAPH PARA GENERAR GRAFO FINAL DE RUTA///////////////////////////////////////////////
+        /*
+        *PASAMOS VERTICES Y EDGES USANDO LA CLASE GRAPH PARA GENERAR GRAFO FINAL DE RUTA
+        */
         Graph<String> graph = new Graph<String>(Graph.TYPE.UNDIRECTED, vertices, edges);
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        ///////////////////////////////////////////////////LIMPIAMOS LAS VARIABLES Y ARREGLOS CADA VEZ QUE GENERAMOS UNA NUEVA RUTA///////////////////////////////////////////////////
+        /*
+        *LIMPIAMOS LAS VARIABLES Y ARREGLOS CADA VEZ QUE GENERAMOS UNA NUEVA RUTA
+        */
         Astar astar = new Astar();
         arregloRutaFinal = new ArrayList();
         arregloRutaFinal.clear();
@@ -387,13 +406,17 @@ public class MainActivity extends AppCompatActivity {
         arregloFloorEnd.clear();
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        /////////TOMAMOS EL GRAFO FINAL Y CON LA CLASE ASTAR GENERAMOS SUS PESOS ENTRE LOS EDGES PARA DETERMINAR RUTA MAS CORTA ENTRE NODOS/////////
+        /*
+        *TOMAMOS EL GRAFO FINAL Y CON LA CLASE ASTAR GENERAMOS SUS PESOS ENTRE LOS EDGES PARA DETERMINAR RUTA MAS CORTA ENTRE NODOS
+        */
         stockList = astar.aStar(graph, vertices.get(a), vertices.get(b));
         //Log.e("TAG", "Stocklist " + stockList);
         //Salida por consola Stocklist [1,43, 43,6, 6,58, 58,151, 151,116, 116,115, 115,114, 114,113, 113,112, 112,111, 111,110, 110,109, 109,108]
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        //////////////////TOMAMOS EL ARREGLO STOCKLIST Y GENERAMOS UN NUEVO ARREGLO ELIMINANDO ESPACIOS Y SEPARANDO POR COMAS////////////////////////////////////
+        /*
+        *TOMAMOS EL ARREGLO STOCKLIST Y GENERAMOS UN NUEVO ARREGLO ELIMINANDO ESPACIOS Y SEPARANDO POR COMAS
+        */
         String ss = "";
         for (int i = 0; i < stockList.size(); i++) {
             ss = String.valueOf(stockList.get(i));
@@ -406,7 +429,9 @@ public class MainActivity extends AppCompatActivity {
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-        ///////////////////UTILIZAMOS LINKEDHASHSET PARA ELIMINAR ELEMENTOS REPETIDOS Y GENERAR RUTA FINAL A DIBUJAR EN EL MAPA///////////////////////////////////////////////////////////////
+        /*
+        *UTILIZAMOS LINKEDHASHSET PARA ELIMINAR ELEMENTOS REPETIDOS Y GENERAR RUTA FINAL A DIBUJAR EN EL MAPA
+        */
         linkedHashSet.addAll(arregloRutaFinal);
         arregloRutaFinal.clear();
         arregloRutaFinal.addAll(linkedHashSet);
@@ -414,7 +439,9 @@ public class MainActivity extends AppCompatActivity {
         //Salida por consola ruta 20 a 620 RUTA FINAL [20, 37, 38, 39, 42, 43, 6, 58, 396, 598, 600, 651, 610, 612, 769, 615, 617, 619, 621, 620]
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        //////////////////////////RECORREMOS MAP PARA DETERMINAR COORD DE LA TIENDA A ILUMINAR Y PUNTO FINAL DE LLEGADA A DIBUJAR///////////////////////////////////////////////////////////////
+        /*
+        *RECORREMOS MAP PARA DETERMINAR COORD DE LA TIENDA A ILUMINAR Y PUNTO FINAL DE LLEGADA A DIBUJAR
+        */
         for (Map.Entry<String, Nodes> cordRectTienda : coordRect.entrySet()){
             float xx = (float) arregloLocationX.get(Integer.parseInt(String.valueOf(arregloRutaFinal.get(arregloRutaFinal.size() - 1))) - 1) ;
             float yy = (float) arregloLocationY.get(Integer.parseInt(String.valueOf(arregloRutaFinal.get(arregloRutaFinal.size() - 1))) - 1);
@@ -428,7 +455,9 @@ public class MainActivity extends AppCompatActivity {
         }
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        //////DETERMINAR ESCALERAS ENCONTRADAS EN LA RUTA OPTIMA y AGREGA COORD X e Y DONDE SE DIBUJARA LA RUTA/////////////////////////////
+        /*
+        *DETERMINAR ESCALERAS ENCONTRADAS EN LA RUTA OPTIMA y AGREGA COORD X e Y DONDE SE DIBUJARA LA RUTA
+        */
         puntos = new ArrayList<>();
         for (int i = 0; i < arregloRutaFinal.size(); i++) {
             for (int j = 0; j < arregloIdRuta.size(); j++) {
@@ -447,7 +476,9 @@ public class MainActivity extends AppCompatActivity {
     ///////////////////////////////////////////////FIN FUNCION CALCULAR RUTA FINAL///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-    /////////////////////////////////////////FUNCION DONDE SE CAMBIA LA POSICION DE LA IMAGEN CONTINUAR RUTA/////////////////////////////////////////////////////////////////////
+    /*
+    *FUNCION DONDE SE CAMBIA LA POSICION DE LA IMAGEN CONTINUAR RUTA
+    */
     public void manoStair(float x, float y) {
         draweeView.setVisibility(View.VISIBLE);
         draweeView.setX(x);
@@ -502,7 +533,9 @@ public class MainActivity extends AppCompatActivity {
     }
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    ///////////////////////////////////EVENTO DE EVENTBUS PARA DETERMINAR SI HAY UNA IMAGEN DE TIENDA A DIBUJAR Y EN QUE POSICION//////////////////////////////////
+    /*
+    *EVENTO DE EVENTBUS PARA DETERMINAR SI HAY UNA IMAGEN DE TIENDA A DIBUJAR Y EN QUE POSICION
+    */
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
     public void onMessageRect(Message event) {
         rect = event.getRect();

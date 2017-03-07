@@ -9,7 +9,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
-import android.graphics.PathMeasure;
 import android.util.AttributeSet;
 import android.view.View;
 
@@ -22,10 +21,9 @@ import java.util.List;
  * Created by simaski on 31-01-17.
  */
 
-public class DrawingPointView extends View {
+public class DrawingPointView extends View {//Clase canvas para dibujar punto de inicio con animacion fade-in fade-out
     Path path;
     Paint paint2;
-    float length;
     int contador;
 
     public ArrayList<Float> coordx = new ArrayList<Float>();
@@ -59,12 +57,17 @@ public class DrawingPointView extends View {
 
         path = new Path();
 
-
+        /*Agregamos los X e Y por donde va a ser dibujada la ruta*/
         for(int i =0; i < puntos.size(); i++){
             coordx.add((float) puntos.get(i).getLocationX());
             coordy.add((float) puntos.get(i).getLocationY());
         }
 
+        /*
+        * Si contador es igual a 0 se dibuja en el punto de inicio de la ruta optima.
+        *
+        * Si no se dibuja el punto desde la segunda escalera encontrada en la ruta.
+        * */
         if(cont == 0) {
             contador  = cont;
                 path.moveTo(coordx.get(cont), coordy.get(cont));
@@ -73,13 +76,7 @@ public class DrawingPointView extends View {
                 path.moveTo(coordx.get(cont+1), coordy.get(cont+1));
         }
 
-        PathMeasure measure = new PathMeasure(path, false);
-        length = measure.getLength();
-
-        float[] intervals = new float[]{length, length};
-
-
-
+        /*ObjectAnimator fade-in fade-out con tiempo de 0.6 segundos */
         ObjectAnimator fadeOut = ObjectAnimator.ofFloat(this, "alpha",  1f, .3f);
         fadeOut.setDuration(600);
         ObjectAnimator fadeIn = ObjectAnimator.ofFloat(this, "alpha", .3f, 1f);
@@ -88,6 +85,7 @@ public class DrawingPointView extends View {
         mAnimationSet.end();
         mAnimationSet.play(fadeIn).after(fadeOut);
 
+        /*Inicia la animacion y la realiza de manera constante*/
         mAnimationSet.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
@@ -105,6 +103,5 @@ public class DrawingPointView extends View {
         super.onDraw(c);
         c.drawPath(path, paint2);
         c.drawCircle(coordx.get(contador), coordy.get(contador), 20, paint2);
-        //c.drawCircle(965, 783, 20, paint2);
     }
 }

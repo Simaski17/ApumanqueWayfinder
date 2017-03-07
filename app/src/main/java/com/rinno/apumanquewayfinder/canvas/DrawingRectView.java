@@ -1,6 +1,5 @@
 package com.rinno.apumanquewayfinder.canvas;
 
-import android.animation.AnimatorSet;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -14,20 +13,14 @@ import android.view.View;
  * Created by simaski on 01-03-17.
  */
 
-public class DrawingRectView extends View {
+public class DrawingRectView extends View {//Clase canvas para dibujar rectangulo tienda.
     Path path;
-    Paint paint;
     Paint paint2;
     float length;
-    int contador;
     private int Xi = 0;
     private int Yi = 0;
     private int Xf = 0;
     private int Yf = 0;
-    private int xx = 0;
-    private int yy = 0;
-
-    final AnimatorSet mAnimationSet = new AnimatorSet();
 
     public DrawingRectView(Context context)
     {
@@ -47,23 +40,20 @@ public class DrawingRectView extends View {
 
     public void init(int[] rectDib)
     {
+        /*Se reciben el X inicio y X final mas el Y inicio y el Y final donde se dibujara el rectangulo de la tienda*/
         Xi =   rectDib[0];
         Yi =   rectDib[1];
         Xf =  rectDib[2];
         Yf =  rectDib[3];
-        xx =  rectDib[4];
-        yy =  rectDib[5];
+
         paint2 = new Paint();
         paint2.setColor(Color.BLUE);
-        //paint2.setStrokeWidth(3);
 
         path = new Path();
 
 
         PathMeasure measure = new PathMeasure(path, false);
         length = measure.getLength();
-
-        //float[] intervals = new float[]{length, length};
 
     }
 
@@ -72,8 +62,6 @@ public class DrawingRectView extends View {
     {
         super.onDraw(c);
         c.drawPath(path, paint2);
-        //c.drawCircle(xx, yy, 10, paint2);
         c.drawRect(Xi, Yi, Xf, Yf,paint2);
-        //c.drawRect(903,658,963,708,paint2);
     }
 }

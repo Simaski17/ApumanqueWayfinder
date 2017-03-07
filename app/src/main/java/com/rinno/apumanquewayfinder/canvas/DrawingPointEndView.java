@@ -1,6 +1,5 @@
 package com.rinno.apumanquewayfinder.canvas;
 
-import android.animation.AnimatorSet;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -14,15 +13,12 @@ import android.view.View;
  * Created by simaski on 02-03-17.
  */
 
-public class DrawingPointEndView extends View {
+public class DrawingPointEndView extends View { //Clase canvas para dibujar punto final en la linea.
     Path path;
     Paint paint2;
     float length;
-    int contador;
     private int xx = 0;
     private int yy = 0;
-
-    final AnimatorSet mAnimationSet = new AnimatorSet();
 
     public DrawingPointEndView(Context context)
     {
@@ -42,8 +38,11 @@ public class DrawingPointEndView extends View {
 
     public void init(int[] rectDib)
     {
+        /*Se reciben el X e Y donde se dibujara el punto final*/
         xx =  rectDib[4];
         yy =  rectDib[5];
+
+
         paint2 = new Paint();
         paint2.setColor(Color.BLUE);
 
