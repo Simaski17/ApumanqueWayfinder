@@ -147,8 +147,10 @@ public class MainActivity extends AppCompatActivity {
         alto = (float) 831 / 1080 + (float) 0.001;
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        /*CalledAlready  VARIABLE ESTATICA QUE DETERMINA SI LA PERSISTENCIA DE FIREBASE HA SIDO O NO LLAMADA ANTES
-        * SI LA HA SIDO LLAMADO CONTINUA SINO REALIZA EL LLAMADO Y PUEDES TRABAJAR CON FIREBASE EN LOCAL*/
+        /*
+        *CalledAlready  VARIABLE ESTATICA QUE DETERMINA SI LA PERSISTENCIA DE FIREBASE HA SIDO O NO LLAMADA ANTES
+        * SI LA HA SIDO LLAMADO CONTINUA SINO REALIZA EL LLAMADO Y PUEDES TRABAJAR CON FIREBASE EN LOCAL
+        * */
         if (!calledAlready) {
             FirebaseDatabase.getInstance().setPersistenceEnabled(true);
             calledAlready = true;
