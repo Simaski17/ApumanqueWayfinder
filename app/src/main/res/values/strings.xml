@@ -1,3 +1,14 @@
 <resources>
     <string name="app_name">ApumanqueWayfinder</string>
+    <string name="informacion">Informacion</string>
+    <string name="banos_damas">Ba\u00F1os Damas</string>
+    <string name="banos_caballeros">Ba\u00F1os Caballeros</string>
+    <string name="banos">Ba\u00F1os</string>
+    <string name="cajeros">Cajeros</string>
+    <string name="ascensor">Ascensor</string>
+    <string name="coches_sillas">Coches y Sillas de Ruedas</string>
+    <string name="guardapeques">Guardapeques</string>
+    <string name="descuentos">Descuentos</string>
+    <string name="estacionamiento">Ticket Estacionamiento</string>
+
 </resources>

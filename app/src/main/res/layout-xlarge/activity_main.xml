@@ -149,7 +149,7 @@
             android:weightSum="14">
             
             <LinearLayout
-                android:id="@+id/llPisoUno"
+                android:id="@+id/llPisoTres"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1.05"
@@ -179,7 +179,7 @@
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/llPisoTres"
+                android:id="@+id/llPisoUno"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1.05"
@@ -209,14 +209,15 @@
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/llInformacion"
+                android:id="@+id/llInformacionAndBanos"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="0.93"
                 android:background="#ff921f">
 
                 <TextView
-                    android:text="Informacion"
+                    android:id="@+id/tvInformacionAndBanos"
+                    android:text="@string/informacion"
                     android:gravity="center"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent" />
@@ -224,14 +225,15 @@
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/llBanosDama"
+                android:id="@+id/llBanosDamaAndAscensor"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="0.93"
                 android:background="#ffffff">
 
                 <TextView
-                    android:text="Baños Damas"
+                    android:id="@+id/tvBanosDamaAndAscensor"
+                    android:text="@string/banos_damas"
                     android:gravity="center"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent" />
@@ -239,14 +241,15 @@
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/llBanosCaballeros"
+                android:id="@+id/llBanosCaballerosAndEstacionamiento"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="0.93"
                 android:background="#ff921f">
 
                 <TextView
-                    android:text="Baños Caballeros"
+                    android:id="@+id/tvBanosCaballerosAndEstacionamiento"
+                    android:text="@string/banos_caballeros"
                     android:gravity="center"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"/>
@@ -254,14 +257,15 @@
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/llCajeros"
+                android:id="@+id/llCajerosAndDescuentos"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="0.93"
                 android:background="#ffffff">
 
                 <TextView
-                    android:text="Cajeros"
+                    android:id="@+id/tvCajerosAndDescuentos"
+                    android:text="@string/cajeros"
                     android:gravity="center"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"/>
@@ -276,7 +280,8 @@
                 android:background="#ff921f">
 
                 <TextView
-                    android:text="Ascensor"
+                    android:id="@+id/tvAscensor"
+                    android:text="@string/ascensor"
                     android:gravity="center"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"/>
@@ -291,7 +296,8 @@
                 android:background="#ffffff">
 
                 <TextView
-                    android:text="Coches y Sillas de Ruedas"
+                    android:id="@+id/tvCochesSillas"
+                    android:text="@string/coches_sillas"
                     android:gravity="center"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"/>
@@ -306,7 +312,8 @@
                 android:background="#ff921f">
 
                 <TextView
-                    android:text="Guardapeques"
+                    android:id="@+id/tvGuardaPeques"
+                    android:text="@string/guardapeques"
                     android:gravity="center"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"/>
@@ -321,7 +328,8 @@
                 android:background="#ffffff">
 
                 <TextView
-                    android:text="Descuentos"
+                    android:id="@+id/tvDescuentosPromociones"
+                    android:text="@string/descuentos"
                     android:gravity="center"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"/>

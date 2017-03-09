@@ -1,33 +1,34 @@
 package com.rinno.apumanquewayfinder;
 
+import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.drawee.view.SimpleDraweeView;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.rinno.apumanquewayfinder.algoritmo.Astar;
 import com.rinno.apumanquewayfinder.algoritmo.Graph;
+import com.rinno.apumanquewayfinder.bd.FirebaseConexion;
 import com.rinno.apumanquewayfinder.canvas.DrawingPointEndView;
 import com.rinno.apumanquewayfinder.canvas.DrawingPointView;
 import com.rinno.apumanquewayfinder.canvas.DrawingRectView;
 import com.rinno.apumanquewayfinder.canvas.DrawingView;
-import com.rinno.apumanquewayfinder.models.Edges;
 import com.rinno.apumanquewayfinder.models.Message;
 import com.rinno.apumanquewayfinder.models.Nodes;
 
@@ -47,33 +48,22 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Optional;
 
+import static com.rinno.apumanquewayfinder.models.Globales.alto;
+import static com.rinno.apumanquewayfinder.models.Globales.ancho;
+
 public class MainActivity extends AppCompatActivity {
 
     //Listas donde manejamos la adicion de los vertices y edges del grafo
-    public List<Graph.Vertex<String>> vertices = new ArrayList<Graph.Vertex<String>>();
     public List<Graph.Edge<String>> edges = new ArrayList<Graph.Edge<String>>();
-
-    Map<String, Nodes> verticesDicc = new HashMap<String, Nodes>();
-
-
-    private ArrayList arregloA = new ArrayList();
-    private ArrayList arregloB = new ArrayList();
-    private ArrayList arregloCosto = new ArrayList();
-    private ArrayList arregloIdRuta = new ArrayList();
-    private ArrayList arregloLocationX = new ArrayList();
-    private ArrayList arregloLocationY = new ArrayList();
     private ArrayList arregloStair = new ArrayList();
-    private ArrayList arregloType = new ArrayList();
     private ArrayList arregloRutaFinal = new ArrayList();
-    private ArrayList arregloFloor = new ArrayList();
     private ArrayList arregloFloorEnd = new ArrayList();
-    private   int[ ]   rectDib = new  int[10];
+    private int[] rectDib = new int[10];
     private String img;
 
-    Map<String, Nodes> coordRect = new HashMap<String, Nodes>();
-
     private List<String> stockList = new ArrayList<String>();
-    List<Nodes> puntos = new ArrayList<Nodes>();
+    private List<Nodes> puntos = new ArrayList<Nodes>();
+    public Map<Integer, Nodes> services = new HashMap<Integer, Nodes>();
 
     private int start;
     private int end;
@@ -81,11 +71,7 @@ public class MainActivity extends AppCompatActivity {
     private int rect;
     private String idStair;
     private int contadorPiso = 0;
-    private float ancho;
-    private float alto;
-
-    DatabaseReference referenceNodes;
-    DatabaseReference referenceEdges;
+    public Temporizador temporizador;
 
     //drawing view canvas
     private DrawingView drawView;
@@ -96,6 +82,8 @@ public class MainActivity extends AppCompatActivity {
     static boolean calledAlready = false;
     private SimpleDraweeView draweeView;
     private SimpleDraweeView dvImgStore;
+
+    FirebaseConexion fc;
 
 
     @BindView(R.id.tvInicio)
@@ -110,7 +98,6 @@ public class MainActivity extends AppCompatActivity {
     Button btIr;
     @BindView(R.id.activity_main)
     RelativeLayout activityMain;
-
     @Nullable
     @BindView(R.id.btEscalera1)
     ImageView btEscalera1;
@@ -124,9 +111,50 @@ public class MainActivity extends AppCompatActivity {
     @BindView(R.id.btEscalera4)
     ImageView btEscalera4;
     @Nullable
+    @BindView(R.id.rlFondoMapa)
+    RelativeLayout rlFondoMapa;
+    @Nullable
     @BindView(R.id.rlPisos)
     RelativeLayout rlPisos;
-    float suma;
+    @BindView(R.id.llPisoUno)
+    LinearLayout llPisoUno;
+    @BindView(R.id.llPisoDos)
+    LinearLayout llPisoDos;
+    @BindView(R.id.llPisoTres)
+    LinearLayout llPisoTres;
+    @BindView(R.id.llInformacionAndBanos)
+    LinearLayout llInformacionAndBanos;
+    @BindView(R.id.llBanosDamaAndAscensor)
+    LinearLayout llBanosDamaAndAscensor;
+    @BindView(R.id.llBanosCaballerosAndEstacionamiento)
+    LinearLayout llBanosCaballerosAndEstacionamiento;
+    @BindView(R.id.llCajerosAndDescuentos)
+    LinearLayout llCajerosAndDescuentos;
+    @BindView(R.id.llAscensor)
+    LinearLayout llAscensor;
+    @BindView(R.id.llCochesSillas)
+    LinearLayout llCochesSillas;
+    @BindView(R.id.llGuardaPeques)
+    LinearLayout llGuardaPeques;
+    @BindView(R.id.llDescuentosPromociones)
+    LinearLayout llDescuentosPromociones;
+    @BindView(R.id.tvInformacionAndBanos)
+    TextView tvInformacionAndBanos;
+    @BindView(R.id.tvBanosDamaAndAscensor)
+    TextView tvBanosDamaAndAscensor;
+    @BindView(R.id.tvBanosCaballerosAndEstacionamiento)
+    TextView tvBanosCaballerosAndEstacionamiento;
+    @BindView(R.id.tvCajerosAndDescuentos)
+    TextView tvCajerosAndDescuentos;
+    @BindView(R.id.tvAscensor)
+    TextView tvAscensor;
+    @BindView(R.id.tvCochesSillas)
+    TextView tvCochesSillas;
+    @BindView(R.id.tvGuardaPeques)
+    TextView tvGuardaPeques;
+    @BindView(R.id.tvDescuentosPromociones)
+    TextView tvDescuentosPromociones;
+
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
     @Override
@@ -142,10 +170,8 @@ public class MainActivity extends AppCompatActivity {
         /*INICIALIZACION LIB BUTTERKNIFE PARA INJECCION DE VISTAS*/
         ButterKnife.bind(this);
 
-        /*ESCALAR PARA DETERMINAR ANCHO Y ALTO CON EL CUAL SE TRABAJARA EN BASE A LAS MEDIDAS PRINCIPALES 1254x1080*/
-        ancho = (float) 965 / 1254 + (float) 0.001;
-        alto = (float) 831 / 1080 + (float) 0.001;
-        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        temporizador = new Temporizador(30000,1000);
+        temporizador.start();
 
         /*
         *CalledAlready  VARIABLE ESTATICA QUE DETERMINA SI LA PERSISTENCIA DE FIREBASE HA SIDO O NO LLAMADA ANTES
@@ -175,17 +201,6 @@ public class MainActivity extends AppCompatActivity {
         drawViewRect = (DrawingRectView) findViewById(R.id.drawingRect); //Rectangulo donde tienda sea igual cuadrado perfecto
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        /*INSTANCIAS DE BD HACIENDO REFERENCIA A LOS NODOS EN LOS CUALES ESTAREMOS TRABAJANDO EN LA APP*/
-        referenceNodes = FirebaseDatabase.getInstance().getReference().child("Nodes");
-        referenceEdges = FirebaseDatabase.getInstance().getReference().child("Edges");
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-        /*HABILITAMOS LA SINCRONIZACION DE LOS NODOS A UTILIZAR  PARA MANTENER DATOS ACTUALIZADOS TANTO EN MEMORIA COMO EN DISCO
-        * SIEMPRE Y CUANDO TENGAMOS CONEXION A INTERNET SINO SOLO SE TENDRAN LOS DATOS EN DISCO*/
-        referenceNodes.keepSynced(true);
-        referenceEdges.keepSynced(true);
-        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
         /*Evento click icono continuar ruta*/
         draweeView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -195,77 +210,15 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+
     }
 
     @Override
     protected void onStart() {
         super.onStart();
 
-         /*CONEXION DEL NODO (Nodes) DESDE FIREBASE. CAPTURA DE DATOS A UTILIZAR POR LA APP.
-         *
-         * Deberia utilzarse AsyncTask para el llamado de estos datos a la base de datos y asi quitarle carga de trabajo a la actividad.
-         * */
-        referenceNodes.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for (int i = 1; i <= dataSnapshot.getChildrenCount(); i++) {
-
-                    Nodes nod = dataSnapshot.child(String.valueOf(i)).getValue(Nodes.class);
-                    Graph.Vertex<String> a = new Graph.Vertex<String>(nod.getId());
-                    arregloIdRuta.add(nod.getId());
-                    arregloLocationX.add(Float.parseFloat(String.valueOf((nod.getLocationX() * ancho) +  5)));
-                    arregloLocationY.add(Float.parseFloat(String.valueOf((nod.getLocationY() * alto)+ 5)));
-                    arregloType.add(String.valueOf(nod.getType()));
-                    arregloFloor.add(String.valueOf(nod.getFloor()));
-                    coordRect.put(nod.getId(), new Nodes(nod.getId(), nod.getRectX() * ancho, nod.getRectY() * ancho , ((nod.getRectX() * ancho) + (nod.getRectW() * ancho)) ,((nod.getRectY() * ancho) + (nod.getRectH() * ancho)),
-                            nod.getImg(), nod.getImgX() * ancho, nod.getImgY() * ancho, nod.getImgW(), nod.getImgH()));
-                    vertices.add(a);
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.e("TAG", "ERROR: " + databaseError);
-            }
-        });
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-         /*
-         *CONEXION DEL NODO (Edges) DESDE FIREBASE. CAPTURA DE DATOS A UTILIZAR POR LA APP
-         */
-        referenceEdges.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for (int i = 1; i < dataSnapshot.getChildrenCount(); i++) {
-
-                    Edges edg = dataSnapshot.child(String.valueOf(i)).getValue(Edges.class);
-                    Graph.Vertex<String> a = new Graph.Vertex<String>(edg.getSource());
-                    Graph.Vertex<String> b = new Graph.Vertex<String>(edg.getEnd());
-
-                    for (int l = 0; l < vertices.size(); l++) {
-                        if (vertices.get(l).equals(a)) {
-                            arregloA.add(l);
-                        }
-                    }
-
-                    for (int l = 0; l < vertices.size(); l++) {
-                        if (vertices.get(l).equals(b)) {
-                            arregloB.add(l);
-                        }
-                    }
-                    arregloCosto.add(edg.getCost());
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.e("TAG", "ERROR: " + databaseError);
-            }
-        });
-        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
+        fc = new FirebaseConexion();
+        fc.init();
     }
 
     /*
@@ -284,6 +237,10 @@ public class MainActivity extends AppCompatActivity {
     }
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+
+    /*
+    * Funcion que se ejecuta al inicio del recorrido de la ruta y muestra las escaleras.
+    * */
     public void seeStair() {
         btEscalera1.setVisibility(View.VISIBLE);
         btEscalera2.setVisibility(View.VISIBLE);
@@ -310,20 +267,24 @@ public class MainActivity extends AppCompatActivity {
     public void cambiarFondoPiso() {
         if (contadorPiso == 1) {
             rlPisos.setBackgroundDrawable(getResources().getDrawable(R.drawable.mapauno));
+            cambiarServiciosLayout(contadorPiso);
         } else if (contadorPiso == 2) {
             rlPisos.setBackgroundDrawable(getResources().getDrawable(R.drawable.mapados));
+            cambiarServiciosLayout(contadorPiso);
         } else {
             rlPisos.setBackgroundDrawable(getResources().getDrawable(R.drawable.mapatres));
+            cambiarServiciosLayout(contadorPiso);
         }
     }
 
 
     @Optional
-    @OnClick({R.id.btIr, R.id.btEscalera1, R.id.btEscalera2, R.id.btEscalera3, R.id.btEscalera4, R.id.rlPisos})
+    @OnClick({R.id.btIr, R.id.btEscalera1, R.id.btEscalera2, R.id.btEscalera3, R.id.btEscalera4, R.id.rlPisos, R.id.llPisoUno, R.id.llPisoDos, R.id.llPisoTres,
+            R.id.llInformacionAndBanos, R.id.llBanosDamaAndAscensor, R.id.llBanosCaballerosAndEstacionamiento, R.id.llCajerosAndDescuentos,
+            R.id.llAscensor, R.id.llCochesSillas, R.id.llGuardaPeques, R.id.llDescuentosPromociones})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btIr:
-                //Log.e("TAG","ARREGLO RUTA ID RUTA: "+arregloIdRuta);
                 idCont = 0;
                 dvImgStore.setVisibility(View.GONE);
                 drawView.setVisibility(View.GONE);
@@ -334,7 +295,7 @@ public class MainActivity extends AppCompatActivity {
                 start = Integer.parseInt(etInicio.getText().toString()) - 1;
                 end = Integer.parseInt(etFin.getText().toString()) - 1;
 
-                calcularRuta(start, end);
+                calculateRoute(start, end);
                 seeStair();
 
                 if (puntos.size() > 0) {
@@ -370,13 +331,83 @@ public class MainActivity extends AppCompatActivity {
             case R.id.rlPisos:
                 //Button b;
                 break;
+            case R.id.llPisoUno:
+                contadorPiso = 1;
+                cambiarServiciosLayout(contadorPiso);
+                cambiarFondoPiso();
+                if (drawView.getVisibility() == View.VISIBLE) {
+                    drawView.setVisibility(View.GONE);
+                    drawViewPoint.setVisibility(View.GONE);
+                    drawViewPointEnd.setVisibility(View.GONE);
+                    drawViewRect.setVisibility(View.GONE);
+                }
+                break;
+            case R.id.llPisoDos:
+                contadorPiso = 2;
+                cambiarServiciosLayout(contadorPiso);
+                cambiarFondoPiso();
+                if (drawView.getVisibility() == View.VISIBLE) {
+                    drawView.setVisibility(View.GONE);
+                    drawViewPoint.setVisibility(View.GONE);
+                    drawViewPointEnd.setVisibility(View.GONE);
+                    drawViewRect.setVisibility(View.GONE);
+                }
+                break;
+            case R.id.llPisoTres:
+                contadorPiso = 3;
+                cambiarServiciosLayout(contadorPiso);
+                cambiarFondoPiso();
+                if (drawView.getVisibility() == View.VISIBLE) {
+                    drawView.setVisibility(View.GONE);
+                    drawViewPoint.setVisibility(View.GONE);
+                    drawViewPointEnd.setVisibility(View.GONE);
+                    drawViewRect.setVisibility(View.GONE);
+                }
+                break;
+            case R.id.llInformacionAndBanos:
+                cambiarServicios();
+                if (drawView.getVisibility() == View.VISIBLE) {
+                    drawView.setVisibility(View.GONE);
+                    drawViewPoint.setVisibility(View.GONE);
+                    drawViewPointEnd.setVisibility(View.GONE);
+                    drawViewRect.setVisibility(View.GONE);
+                }
+                break;
+            case R.id.llBanosDamaAndAscensor:
+                cambiarServicios();
+                if (drawView.getVisibility() == View.VISIBLE) {
+                    drawView.setVisibility(View.GONE);
+                    drawViewPoint.setVisibility(View.GONE);
+                    drawViewPointEnd.setVisibility(View.GONE);
+                    drawViewRect.setVisibility(View.GONE);
+                }
+                break;
+            case R.id.llBanosCaballerosAndEstacionamiento:
+                cambiarServicios();
+                if (drawView.getVisibility() == View.VISIBLE) {
+                    drawView.setVisibility(View.GONE);
+                    drawViewPoint.setVisibility(View.GONE);
+                    drawViewPointEnd.setVisibility(View.GONE);
+                    drawViewRect.setVisibility(View.GONE);
+                }
+                break;
+            case R.id.llCajerosAndDescuentos:
+                break;
+            case R.id.llAscensor:
+                break;
+            case R.id.llCochesSillas:
+                break;
+            case R.id.llGuardaPeques:
+                break;
+            case R.id.llDescuentosPromociones:
+                break;
         }
     }
 
     /*
     *FUNCION CALCULAR RUTA FINAL
     */
-    public void calcularRuta(int a, int b) {
+    public void calculateRoute(int a, int b) {
         draweeView.setVisibility(View.GONE);
         Set<String> linkedHashSet = new LinkedHashSet<String>();
         edges.clear();
@@ -384,17 +415,16 @@ public class MainActivity extends AppCompatActivity {
         /*
         AGREGA EDGES RESPECTO A CADA UNO DE LOS VERTICES
         */
-        for (int i = 0; i < arregloA.size(); i++) {
-            Graph.Edge<String> ed = new Graph.Edge<String>((int) arregloCosto.get(i), vertices.get((int) arregloA.get(i)), vertices.get((int) arregloB.get(i)));
+        for (int i = 0; i < fc.arregloA.size(); i++) {
+            Graph.Edge<String> ed = new Graph.Edge<String>((int) fc.arregloCosto.get(i), fc.vertices.get((int) fc.arregloA.get(i)), fc.vertices.get((int) fc.arregloB.get(i)));
             edges.add(ed);
         }
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
         /*
         *PASAMOS VERTICES Y EDGES USANDO LA CLASE GRAPH PARA GENERAR GRAFO FINAL DE RUTA
         */
-        Graph<String> graph = new Graph<String>(Graph.TYPE.UNDIRECTED, vertices, edges);
+        Graph<String> graph = new Graph<String>(Graph.TYPE.UNDIRECTED, fc.vertices, edges);
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         /*
@@ -411,7 +441,7 @@ public class MainActivity extends AppCompatActivity {
         /*
         *TOMAMOS EL GRAFO FINAL Y CON LA CLASE ASTAR GENERAMOS SUS PESOS ENTRE LOS EDGES PARA DETERMINAR RUTA MAS CORTA ENTRE NODOS
         */
-        stockList = astar.aStar(graph, vertices.get(a), vertices.get(b));
+        stockList = astar.aStar(graph, fc.vertices.get(a), fc.vertices.get(b));
         //Log.e("TAG", "Stocklist " + stockList);
         //Salida por consola Stocklist [1,43, 43,6, 6,58, 58,151, 151,116, 116,115, 115,114, 114,113, 113,112, 112,111, 111,110, 110,109, 109,108]
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -430,7 +460,6 @@ public class MainActivity extends AppCompatActivity {
         //Salida por consola ruta 20 a 620 ARREGLO RUTA FINAL: [20, 37, 37, 38, 38, 39, 39, 42, 42, 43, 43, 6, 6, 58, 58, 396, 396, 598, 598, 600, 600, 651, 651, 610, 610, 612, 612, 769, 769, 615, 615, 617, 617, 619, 619, 621, 621, 620]
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
         /*
         *UTILIZAMOS LINKEDHASHSET PARA ELIMINAR ELEMENTOS REPETIDOS Y GENERAR RUTA FINAL A DIBUJAR EN EL MAPA
         */
@@ -444,14 +473,15 @@ public class MainActivity extends AppCompatActivity {
         /*
         *RECORREMOS MAP PARA DETERMINAR COORD DE LA TIENDA A ILUMINAR Y PUNTO FINAL DE LLEGADA A DIBUJAR
         */
-        for (Map.Entry<String, Nodes> cordRectTienda : coordRect.entrySet()){
-            float xx = (float) arregloLocationX.get(Integer.parseInt(String.valueOf(arregloRutaFinal.get(arregloRutaFinal.size() - 1))) - 1) ;
-            float yy = (float) arregloLocationY.get(Integer.parseInt(String.valueOf(arregloRutaFinal.get(arregloRutaFinal.size() - 1))) - 1);
-            if(arregloRutaFinal.size() > 0) {
+        for (Map.Entry<String, Nodes> cordRectTienda : fc.coordRect.entrySet()) {
+            float xx = (float) fc.arregloLocationX.get(Integer.parseInt(String.valueOf(arregloRutaFinal.get(arregloRutaFinal.size() - 1))) - 1);
+            float yy = (float) fc.arregloLocationY.get(Integer.parseInt(String.valueOf(arregloRutaFinal.get(arregloRutaFinal.size() - 1))) - 1);
+            if (arregloRutaFinal.size() > 0) {
                 if (cordRectTienda.getKey().equals(arregloRutaFinal.get(arregloRutaFinal.size() - 1))) {
                     img = cordRectTienda.getValue().getImg();
-                    rectDib = new int[]{(int) cordRectTienda.getValue().getRectX(),(int)  cordRectTienda.getValue().getRectY(),(int)  cordRectTienda.getValue().getRectW(),(int)  cordRectTienda.getValue().getRectH(), (int) xx, (int) yy,
-                            (int) cordRectTienda.getValue().getImgX(),(int)  cordRectTienda.getValue().getImgY(),(int)  cordRectTienda.getValue().getImgW(),(int)  cordRectTienda.getValue().getImgH()};
+                    Log.e("TAG","IMAGEN: "+img);
+                    rectDib = new int[]{(int) cordRectTienda.getValue().getRectX(), (int) cordRectTienda.getValue().getRectY(), (int) cordRectTienda.getValue().getRectW(), (int) cordRectTienda.getValue().getRectH(), (int) xx, (int) yy,
+                            (int) cordRectTienda.getValue().getImgX(), (int) cordRectTienda.getValue().getImgY(), (int) cordRectTienda.getValue().getImgW(), (int) cordRectTienda.getValue().getImgH()};
                 }
             }
         }
@@ -462,21 +492,19 @@ public class MainActivity extends AppCompatActivity {
         */
         puntos = new ArrayList<>();
         for (int i = 0; i < arregloRutaFinal.size(); i++) {
-            for (int j = 0; j < arregloIdRuta.size(); j++) {
-                if (arregloRutaFinal.get(i).equals(arregloIdRuta.get(j))) {
-                    arregloFloorEnd.add(arregloFloor.get(j));
-                    //Log.e("TAG", "ARREGLO PISO FINAL: " + arregloFloorEnd);
-                    if (arregloType.get(j).equals("stair")) {
+            for (int j = 0; j < fc.arregloIdRuta.size(); j++) {
+                if (arregloRutaFinal.get(i).equals(fc.arregloIdRuta.get(j))) {
+                    arregloFloorEnd.add(fc.arregloFloor.get(j));
+                    if (fc.arregloType.get(j).equals("stair")) {
                         arregloStair.add(i);
                     }
-                    puntos.add(new Nodes((float) arregloLocationX.get(j), (float) arregloLocationY.get(j)));
+                    puntos.add(new Nodes((float) fc.arregloLocationX.get(j), (float) fc.arregloLocationY.get(j)));
                 }
             }
         }
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     }
     ///////////////////////////////////////////////FIN FUNCION CALCULAR RUTA FINAL///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 
     /*
     *FUNCION DONDE SE CAMBIA LA POSICION DE LA IMAGEN CONTINUAR RUTA
@@ -487,6 +515,81 @@ public class MainActivity extends AppCompatActivity {
         draweeView.setY(y);
     }
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    /*
+    * Funcion para cambiar imagen de los servicios segun sea el seleccionado en la pantalla del mapa
+    * */
+    public void cambiarServicios() {
+        for (int i = 0; i < fc.arregloType.size(); i++){
+                int j = 0;
+                if(fc.arregloType.get(i).equals("bathroomMen") && fc.arregloFloor.get(i).equals(String.valueOf(contadorPiso))){
+                    services.put(i, new Nodes((float) fc.arregloLocationX.get(i),(float) fc.arregloLocationY.get(i)));
+                    Log.e("TAG","VALOR DE X: "+i +"**********"+fc.arregloLocationX.get(i));
+                }
+
+        }
+
+
+            if (contadorPiso == 1) {
+                RelativeLayout layout = (RelativeLayout) findViewById(R.id.rlFondoMapa);
+
+                Drawable myDrawable = getResources().getDrawable(R.drawable.informacion);
+                ImageView image = new ImageView(this);
+                image.setLayoutParams(new ViewGroup.LayoutParams(60, 60));
+                image.setImageDrawable(myDrawable);
+                image.setX(0);
+                image.setY(300);
+
+                // Adds the view to the layout
+                layout.addView(image);
+            } else if (contadorPiso == 2) {
+                RelativeLayout layout = (RelativeLayout) findViewById(R.id.rlFondoMapa);
+
+                Drawable myDrawable = getResources().getDrawable(R.drawable.informacion);
+                ImageView image = new ImageView(this);
+                image.setLayoutParams(new ViewGroup.LayoutParams(60, 60));
+                image.setImageDrawable(myDrawable);
+                image.setX(0);
+                image.setY(300);
+
+                // Adds the view to the layout
+                layout.addView(image);
+            } else {
+                RelativeLayout layout = (RelativeLayout) findViewById(R.id.rlFondoMapa);
+
+                Drawable myDrawable = getResources().getDrawable(R.drawable.banos);
+                ImageView image = new ImageView(this);
+                image.setLayoutParams(new ViewGroup.LayoutParams(60, 60));
+                image.setImageDrawable(myDrawable);
+                image.setX(0);
+                image.setY(300);
+
+                // Adds the view to the layout
+                layout.addView(image);
+            }
+    }
+
+    public void cambiarServiciosLayout(int contadorPiso){
+        if (contadorPiso <= 2) {
+            tvInformacionAndBanos.setText(R.string.informacion);
+            tvBanosDamaAndAscensor.setText(R.string.banos_damas);
+            tvBanosCaballerosAndEstacionamiento.setText(R.string.banos_caballeros);
+            tvCajerosAndDescuentos.setText(R.string.cajeros);
+            llAscensor.setVisibility(View.VISIBLE);
+            llCochesSillas.setVisibility(View.VISIBLE);
+            llGuardaPeques.setVisibility(View.VISIBLE);
+            llDescuentosPromociones.setVisibility(View.VISIBLE);
+        } else {
+            tvInformacionAndBanos.setText(R.string.banos);
+            tvBanosDamaAndAscensor.setText(R.string.ascensor);
+            tvBanosCaballerosAndEstacionamiento.setText(R.string.estacionamiento);
+            tvCajerosAndDescuentos.setText(R.string.descuentos);
+            llAscensor.setVisibility(View.GONE);
+            llCochesSillas.setVisibility(View.GONE);
+            llGuardaPeques.setVisibility(View.GONE);
+            llDescuentosPromociones.setVisibility(View.GONE);
+        }
+    }
 
     @Override
     public void onResume() {
@@ -506,6 +609,8 @@ public class MainActivity extends AppCompatActivity {
         if (FirebaseDatabase.getInstance() != null) {
             FirebaseDatabase.getInstance().goOffline();
         }
+
+        temporizador.cancel();
 
     }
 
@@ -528,7 +633,7 @@ public class MainActivity extends AppCompatActivity {
             btEscalera3.setEnabled(true);
             contadorPiso = Integer.parseInt((String) arregloFloorEnd.get(idCont + 2));
         } else if (idCont > 0 && idStair.equals("cuatro")) {
-            manoStair(1300 * ancho,890 * alto);
+            manoStair(1300 * ancho, 890 * alto);
             btEscalera4.setEnabled(true);
             contadorPiso = Integer.parseInt((String) arregloFloorEnd.get(idCont + 2));
         }
@@ -541,12 +646,12 @@ public class MainActivity extends AppCompatActivity {
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
     public void onMessageRect(Message event) {
         rect = event.getRect();
-        if (rect == 4){
+        if (rect == 4) {
             dvImgStore.setX(rectDib[6]);
             dvImgStore.setY(rectDib[7] + 1);
             dvImgStore.getLayoutParams().width = (int) (rectDib[8] * ancho);
             dvImgStore.getLayoutParams().height = (int) (rectDib[9] * alto);
-            if(img != null) {
+            if (img != null) {
                 Uri uri = Uri.parse(img);
                 dvImgStore.setImageURI(uri);
                 dvImgStore.setVisibility(View.VISIBLE);
@@ -565,7 +670,34 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    @OnClick(R.id.btIr)
-    public void onClick() {
+    @Override
+    public void onUserInteraction() {
+        temporizador.cancel();
+        temporizador.start();
     }
+
+    public class Temporizador extends CountDownTimer {
+        /**
+         * @param millisInFuture    The number of millis in the future from the call
+         *                          to {@link #start()} until the countdown is done and {@link #onFinish()}
+         *                          is called.
+         * @param countDownInterval The interval along the way to receive
+         *                          {@link #onTick(long)} callbacks.
+         */
+        public Temporizador(long millisInFuture, long countDownInterval) {
+            super(millisInFuture, countDownInterval);
+        }
+
+        @Override
+        public void onTick(long millisUntilFinished) {
+
+        }
+
+        @Override
+        public void onFinish() {
+            startActivity(new Intent(getApplicationContext(), MainScreenActivity.class));
+            //Toast.makeText(MainActivity.this, "TERMINO TEMP", Toast.LENGTH_SHORT).show();
+        }
+    }
+
 }

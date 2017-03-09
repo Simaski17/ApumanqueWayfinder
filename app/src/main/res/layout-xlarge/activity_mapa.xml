@@ -9,6 +9,7 @@
 
 
     <RelativeLayout
+        android:id="@+id/rlFondoMapa"
         android:layout_width="965dp"
         android:layout_height="832dp"
         android:layout_marginLeft="203dp"
