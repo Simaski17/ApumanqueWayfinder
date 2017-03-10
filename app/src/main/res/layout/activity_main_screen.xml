@@ -55,7 +55,8 @@
             android:text="Ver Mapa"
             android:textSize="27sp"
             android:textColor="#ffffff"
-            android:layout_marginLeft="10dp"/>
+            android:layout_marginLeft="10dp"
+            fontPath="fonts/Lato-Regular.ttf"/>
 
     </LinearLayout>
 

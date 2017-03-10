@@ -59,6 +59,7 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList arregloRutaFinal = new ArrayList();
     private ArrayList arregloFloorEnd = new ArrayList();
     private int[] rectDib = new int[10];
+    private String[] arrayServices = new String[8];
     private String img;
 
     private List<String> stockList = new ArrayList<String>();
@@ -71,6 +72,7 @@ public class MainActivity extends AppCompatActivity {
     private int rect;
     private String idStair;
     private int contadorPiso = 0;
+    private ImageView imageOne;
     public Temporizador temporizador;
 
     //drawing view canvas
@@ -84,6 +86,8 @@ public class MainActivity extends AppCompatActivity {
     private SimpleDraweeView dvImgStore;
 
     FirebaseConexion fc;
+
+    private RelativeLayout layout;
 
 
     @BindView(R.id.tvInicio)
@@ -167,6 +171,17 @@ public class MainActivity extends AppCompatActivity {
         /*CONTENEDOR PRINCIPAL DE LA ACTIVIDAD*/
         setContentView(R.layout.activity_main);
 
+        View decorView = getWindow().getDecorView();
+        int uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                | View.SYSTEM_UI_FLAG_FULLSCREEN;
+        decorView.setSystemUiVisibility(uiOptions);
+
+        layout = (RelativeLayout) findViewById(R.id.rlFondoMapaServicios);
+
+        imageOne = new ImageView(this);
+
+        arrayServices = new String[]{"information","bathroomWomen", "bathroomMen", "atm",  "lift",  "babyCarrierAndWheelChair", "keeper", "parkingAtm"};
+
         /*INICIALIZACION LIB BUTTERKNIFE PARA INJECCION DE VISTAS*/
         ButterKnife.bind(this);
 
@@ -209,8 +224,6 @@ public class MainActivity extends AppCompatActivity {
                 stairEvent();
             }
         });
-
-
     }
 
     @Override
@@ -335,71 +348,67 @@ public class MainActivity extends AppCompatActivity {
                 contadorPiso = 1;
                 cambiarServiciosLayout(contadorPiso);
                 cambiarFondoPiso();
-                if (drawView.getVisibility() == View.VISIBLE) {
-                    drawView.setVisibility(View.GONE);
-                    drawViewPoint.setVisibility(View.GONE);
-                    drawViewPointEnd.setVisibility(View.GONE);
-                    drawViewRect.setVisibility(View.GONE);
-                }
+                canvasVisible();
                 break;
             case R.id.llPisoDos:
                 contadorPiso = 2;
                 cambiarServiciosLayout(contadorPiso);
                 cambiarFondoPiso();
-                if (drawView.getVisibility() == View.VISIBLE) {
-                    drawView.setVisibility(View.GONE);
-                    drawViewPoint.setVisibility(View.GONE);
-                    drawViewPointEnd.setVisibility(View.GONE);
-                    drawViewRect.setVisibility(View.GONE);
-                }
+                canvasVisible();
                 break;
             case R.id.llPisoTres:
                 contadorPiso = 3;
                 cambiarServiciosLayout(contadorPiso);
                 cambiarFondoPiso();
-                if (drawView.getVisibility() == View.VISIBLE) {
-                    drawView.setVisibility(View.GONE);
-                    drawViewPoint.setVisibility(View.GONE);
-                    drawViewPointEnd.setVisibility(View.GONE);
-                    drawViewRect.setVisibility(View.GONE);
-                }
+                canvasVisible();
                 break;
             case R.id.llInformacionAndBanos:
-                cambiarServicios();
-                if (drawView.getVisibility() == View.VISIBLE) {
-                    drawView.setVisibility(View.GONE);
-                    drawViewPoint.setVisibility(View.GONE);
-                    drawViewPointEnd.setVisibility(View.GONE);
-                    drawViewRect.setVisibility(View.GONE);
+                if(contadorPiso <= 2) {
+                    cambiarServicios(arrayServices[0],0);
+                }else {
+                    cambiarServicios(arrayServices[2],8);
                 }
+                canvasVisible();
                 break;
             case R.id.llBanosDamaAndAscensor:
-                cambiarServicios();
-                if (drawView.getVisibility() == View.VISIBLE) {
-                    drawView.setVisibility(View.GONE);
-                    drawViewPoint.setVisibility(View.GONE);
-                    drawViewPointEnd.setVisibility(View.GONE);
-                    drawViewRect.setVisibility(View.GONE);
+                if (contadorPiso <= 2) {
+                    cambiarServicios(arrayServices[1],1);
+                }else {
+                    cambiarServicios(arrayServices[4],4);
                 }
+                canvasVisible();
                 break;
             case R.id.llBanosCaballerosAndEstacionamiento:
-                cambiarServicios();
-                if (drawView.getVisibility() == View.VISIBLE) {
-                    drawView.setVisibility(View.GONE);
-                    drawViewPoint.setVisibility(View.GONE);
-                    drawViewPointEnd.setVisibility(View.GONE);
-                    drawViewRect.setVisibility(View.GONE);
+                if (contadorPiso <= 2) {
+                    cambiarServicios(arrayServices[2],2);
+                }else {
+                    cambiarServicios(arrayServices[7],9);
                 }
+                canvasVisible();
                 break;
             case R.id.llCajerosAndDescuentos:
+                if (contadorPiso <= 2) {
+                    cambiarServicios(arrayServices[3],3);
+                }else {
+                    cambiarServicios(arrayServices[4],7);
+                }
+                canvasVisible();
                 break;
             case R.id.llAscensor:
+                cambiarServicios(arrayServices[4],4);
+                canvasVisible();
                 break;
             case R.id.llCochesSillas:
+                cambiarServicios(arrayServices[5],5);
+                canvasVisible();
                 break;
             case R.id.llGuardaPeques:
+                cambiarServicios(arrayServices[6],6);
+                canvasVisible();
                 break;
             case R.id.llDescuentosPromociones:
+                cambiarServicios(arrayServices[6],7);
+                canvasVisible();
                 break;
         }
     }
@@ -519,54 +528,30 @@ public class MainActivity extends AppCompatActivity {
     /*
     * Funcion para cambiar imagen de los servicios segun sea el seleccionado en la pantalla del mapa
     * */
-    public void cambiarServicios() {
+    public void cambiarServicios(String nameServices, int img) {
+
+        layout.removeAllViews();
+        services.clear();
         for (int i = 0; i < fc.arregloType.size(); i++){
-                int j = 0;
-                if(fc.arregloType.get(i).equals("bathroomMen") && fc.arregloFloor.get(i).equals(String.valueOf(contadorPiso))){
-                    services.put(i, new Nodes((float) fc.arregloLocationX.get(i),(float) fc.arregloLocationY.get(i)));
-                    Log.e("TAG","VALOR DE X: "+i +"**********"+fc.arregloLocationX.get(i));
-                }
-
-        }
-
-
-            if (contadorPiso == 1) {
-                RelativeLayout layout = (RelativeLayout) findViewById(R.id.rlFondoMapa);
-
-                Drawable myDrawable = getResources().getDrawable(R.drawable.informacion);
-                ImageView image = new ImageView(this);
-                image.setLayoutParams(new ViewGroup.LayoutParams(60, 60));
-                image.setImageDrawable(myDrawable);
-                image.setX(0);
-                image.setY(300);
-
-                // Adds the view to the layout
-                layout.addView(image);
-            } else if (contadorPiso == 2) {
-                RelativeLayout layout = (RelativeLayout) findViewById(R.id.rlFondoMapa);
-
-                Drawable myDrawable = getResources().getDrawable(R.drawable.informacion);
-                ImageView image = new ImageView(this);
-                image.setLayoutParams(new ViewGroup.LayoutParams(60, 60));
-                image.setImageDrawable(myDrawable);
-                image.setX(0);
-                image.setY(300);
-
-                // Adds the view to the layout
-                layout.addView(image);
-            } else {
-                RelativeLayout layout = (RelativeLayout) findViewById(R.id.rlFondoMapa);
-
-                Drawable myDrawable = getResources().getDrawable(R.drawable.banos);
-                ImageView image = new ImageView(this);
-                image.setLayoutParams(new ViewGroup.LayoutParams(60, 60));
-                image.setImageDrawable(myDrawable);
-                image.setX(0);
-                image.setY(300);
-
-                // Adds the view to the layout
-                layout.addView(image);
+            if(fc.arregloType.get(i).equals(nameServices) && fc.arregloFloor.get(i).equals(String.valueOf(contadorPiso))){
+                services.put(i, new Nodes((float) fc.arregloLocationX.get(i),(float) fc.arregloLocationY.get(i)));
             }
+        }
+        String uri;
+        int imageResource;
+        Drawable myDrawable;
+        for (Map.Entry<Integer, Nodes> servicesf :  services.entrySet()) {
+            uri = "@drawable/img"+img;
+            imageResource = getResources().getIdentifier(uri, null, getPackageName());
+            myDrawable = getResources().getDrawable(imageResource);
+
+            imageOne = new ImageView(this);
+            imageOne.setLayoutParams(new ViewGroup.LayoutParams(60, 60));
+            imageOne.setImageDrawable(myDrawable);
+            imageOne.setX(servicesf.getValue().getLocationX() - 30);
+            imageOne.setY(servicesf.getValue().getLocationY() - 60);
+            layout.addView(imageOne);
+        }
     }
 
     public void cambiarServiciosLayout(int contadorPiso){
@@ -588,6 +573,15 @@ public class MainActivity extends AppCompatActivity {
             llCochesSillas.setVisibility(View.GONE);
             llGuardaPeques.setVisibility(View.GONE);
             llDescuentosPromociones.setVisibility(View.GONE);
+        }
+    }
+
+    public void canvasVisible(){
+        if (drawView.getVisibility() == View.VISIBLE) {
+            drawView.setVisibility(View.GONE);
+            drawViewPoint.setVisibility(View.GONE);
+            drawViewPointEnd.setVisibility(View.GONE);
+            drawViewRect.setVisibility(View.GONE);
         }
     }
 
@@ -677,13 +671,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public class Temporizador extends CountDownTimer {
-        /**
-         * @param millisInFuture    The number of millis in the future from the call
-         *                          to {@link #start()} until the countdown is done and {@link #onFinish()}
-         *                          is called.
-         * @param countDownInterval The interval along the way to receive
-         *                          {@link #onTick(long)} callbacks.
-         */
+
         public Temporizador(long millisInFuture, long countDownInterval) {
             super(millisInFuture, countDownInterval);
         }
@@ -696,7 +684,6 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onFinish() {
             startActivity(new Intent(getApplicationContext(), MainScreenActivity.class));
-            //Toast.makeText(MainActivity.this, "TERMINO TEMP", Toast.LENGTH_SHORT).show();
         }
     }
 

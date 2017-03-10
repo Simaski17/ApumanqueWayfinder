@@ -55,6 +55,13 @@
 
         <include layout="@layout/stairs"/>
 
+        <RelativeLayout
+            android:id="@+id/rlFondoMapaServicios"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        </RelativeLayout>
+
     </RelativeLayout>
 
     <com.facebook.drawee.view.SimpleDraweeView
