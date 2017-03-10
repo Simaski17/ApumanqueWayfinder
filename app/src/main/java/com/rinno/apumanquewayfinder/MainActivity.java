@@ -451,8 +451,6 @@ public class MainActivity extends AppCompatActivity {
         *TOMAMOS EL GRAFO FINAL Y CON LA CLASE ASTAR GENERAMOS SUS PESOS ENTRE LOS EDGES PARA DETERMINAR RUTA MAS CORTA ENTRE NODOS
         */
         stockList = astar.aStar(graph, fc.vertices.get(a), fc.vertices.get(b));
-        //Log.e("TAG", "Stocklist " + stockList);
-        //Salida por consola Stocklist [1,43, 43,6, 6,58, 58,151, 151,116, 116,115, 115,114, 114,113, 113,112, 112,111, 111,110, 110,109, 109,108]
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         /*
@@ -465,8 +463,6 @@ public class MainActivity extends AppCompatActivity {
             arregloRutaFinal.add(sp[0]);
             arregloRutaFinal.add(sp[1]);
         }
-        //Log.e("TAG","ARREGLO RUTA FINAL: "+arregloRutaFinal);
-        //Salida por consola ruta 20 a 620 ARREGLO RUTA FINAL: [20, 37, 37, 38, 38, 39, 39, 42, 42, 43, 43, 6, 6, 58, 58, 396, 396, 598, 598, 600, 600, 651, 651, 610, 610, 612, 612, 769, 769, 615, 615, 617, 617, 619, 619, 621, 621, 620]
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         /*
@@ -475,8 +471,6 @@ public class MainActivity extends AppCompatActivity {
         linkedHashSet.addAll(arregloRutaFinal);
         arregloRutaFinal.clear();
         arregloRutaFinal.addAll(linkedHashSet);
-        //Log.e("TAG", "RUTA FINAL " + arregloRutaFinal);
-        //Salida por consola ruta 20 a 620 RUTA FINAL [20, 37, 38, 39, 42, 43, 6, 58, 396, 598, 600, 651, 610, 612, 769, 615, 617, 619, 621, 620]
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         /*
@@ -582,6 +576,7 @@ public class MainActivity extends AppCompatActivity {
             drawViewPoint.setVisibility(View.GONE);
             drawViewPointEnd.setVisibility(View.GONE);
             drawViewRect.setVisibility(View.GONE);
+            dvImgStore.setVisibility(View.GONE);
         }
     }
 
